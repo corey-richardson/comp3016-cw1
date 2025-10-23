@@ -31,6 +31,6 @@ public:
 		return (this->type == TileType::Walkable ||
 				this->type == TileType::Start ||
 				this->type == TileType::End
-			);
+		);
 	}
 };
