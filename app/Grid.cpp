@@ -91,9 +91,13 @@ void Grid::updateLevelState(const Coords& previous) {
 
 bool Grid::checkWinCondition(const Coords& currentPos) const {
 	/* At end point tile and remaining walkable tiles is 0 */
-	if (currentPos == this->endCoords && this->getRemainingWalkableTiles() == 0) {
-		return true;
+	if (!(currentPos == this->endCoords)) {
+		return false;
 	}
 
-	return false;
+	if (this->getRemainingWalkableTiles() != 0) {
+		return false;
+	}
+
+	return true;
 }
