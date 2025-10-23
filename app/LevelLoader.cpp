@@ -16,14 +16,26 @@ static std::vector<std::vector<TileType>> loadLevel(const std::string& filename)
 			std::vector<TileType> row;
 			std::getline(file, line);
 
+			// Skip empty lines
+			if (line.empty()) {
+				continue; 
+			}
+
 			for (char c : line) {
 				TileType type = Tile::charToTileType(c);
 
 				if (type == TileType::Invalid) {
-					throw LevelLoadException("Failed to parse character to Tile: " + c);
+					// https://stackoverflow.com/questions/17201590/how-can-i-create-a-string-from-a-single-character
+					// anonymous string conversion woah
+					throw LevelLoadException("Failed to parse character '" + std::string(1, c) + " into a Tile.");
 				}
 
 				row.push_back(type);
+			}
+
+			// Skip empty lines
+			if (row.empty()) {
+				continue;
 			}
 
 			levelData.push_back(row);
@@ -32,9 +44,16 @@ static std::vector<std::vector<TileType>> loadLevel(const std::string& filename)
 	// https://en.cppreference.com/w/cpp/language/catch.html
 	catch (...) {
 		file.close();
-		throw;
+		throw; // Bubble up
 	}
 
+	// Resource cleanup BEFORE level data check
 	file.close();
+
+	// No valid level data?
+	if (levelData.empty()) {
+		throw LevelLoadException("File contained no level setup data.");
+	}
+
 	return levelData;
 }
