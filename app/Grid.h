@@ -50,7 +50,7 @@ public:
 	int getRemainingWalkableTiles() const { return this->remainingWalkableTiles;  }
 
 	/* Game Logic Methods */
-	bool checkValidMove(const Coords& origin, const Coords* target) const;
+	bool isValidMove(const Coords& target) const;
 	void updateLevelState(const Coords& origin, const Coords* target);
 	bool checkWinCondition(const Coords& currentPos) const;
 

@@ -5,6 +5,7 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	Then, record game goal points and walkable tiles */
 
 	if (levelData.empty()) {
+		std::cerr << "Level data is empty!" << std::endl;
 		return; // throw
 	}
 
@@ -40,9 +41,34 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 
 /*
 * TODO:
-checkValidMove
+isValidMove
 updateLevelState
 checkWinCondition
 resetLevel
 displayLevel
 */
+
+bool Grid::isValidMove(const Coords& target) const {
+	/* Check not going out of bounds of Grid
+	Check TileType not Void, Visitied (or Invalid?) */
+	bool inBounds = target.x >= 0 && target.x < this->width &&
+		target.y >= 0 && target.y < this->height;
+
+	if (!inBounds) {
+		std::cerr << "Invalid Move: Out of bounds." << std::endl;
+		return false;
+	}
+
+	const Tile& targetTile = tiles[target.x][target.y];
+
+	TileType targetTileType = targetTile.getType();
+	if (targetTileType == TileType::Void ||
+		targetTileType == TileType::Visited ||
+		targetTileType == TileType::Invalid) {
+		
+		std::cerr << "Invalid Move: Fell into the void or hit an already visited Tile." << std::endl;
+		return false;
+	}
+
+	return true;
+}
