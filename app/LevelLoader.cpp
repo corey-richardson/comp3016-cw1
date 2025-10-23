@@ -1,5 +1,14 @@
 #include "LevelLoader.h"
 
+/**
+* @brief Loads and parses a level from a file into a 2D vector of TileTypes
+* @param filename The path to the level (blueprint?) file
+* @return levelData A 2D vector of TileTypes
+* @throws LevelLoadException
+* 1. The file cannot be opened
+* 2. File contains invalid characters that can't be parsed
+* 3. File line have inconsistent lengths
+*/
 static std::vector<std::vector<TileType>> loadLevel(const std::string& filename) {
 	std::ifstream file(filename); // ios::in
 
@@ -13,9 +22,8 @@ static std::vector<std::vector<TileType>> loadLevel(const std::string& filename)
 	int lineLength = -1;
 
 	try {
-		while (!file.eof()) {
+		while (std::getline(file, line)) {
 			std::vector<TileType> row;
-			std::getline(file, line);
 
 			// Skip empty lines
 			if (line.empty()) {
