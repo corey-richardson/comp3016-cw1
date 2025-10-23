@@ -49,6 +49,15 @@ public:
 
 	int getRemainingWalkableTiles() const { return this->remainingWalkableTiles;  }
 
+	/* Game Logic Methods */
+	bool checkValidMove(const Coords& origin, const Coords* target) const;
+	void updateLevelState(const Coords& origin, const Coords* target);
+	bool checkWinCondition(const Coords& currentPos) const;
+
+	void resetLevel();
+
+	void displayLevel() const;
+
 };
 
 #endif // ! GRID_H
