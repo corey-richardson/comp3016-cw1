@@ -63,7 +63,7 @@ bool Grid::isValidMove(const Coords& target) const {
 		return false;
 	}
 
-	const Tile& targetTile = tiles[target.x][target.y];
+	const Tile& targetTile = tiles[target.y][target.x];
 
 	TileType targetTileType = targetTile.getType();
 	if (targetTileType == TileType::Void ||
@@ -82,8 +82,8 @@ bool Grid::isValidMove(const Coords& target) const {
 
 void Grid::updateLevelState(const Coords& previous) {
 	/* Mark the tile the player just moved away from as visited */
-	if (this->tiles[previous.x][previous.y].getType() != TileType::Start) {
-		this->tiles[previous.x][previous.y].setType(TileType::Visited);
+	if (this->tiles[previous.y][previous.x].getType() != TileType::Start) {
+		this->tiles[previous.y][previous.x].setType(TileType::Visited);
 		this->decrementWalkableTiles();
 	}
 }
