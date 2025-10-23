@@ -43,9 +43,9 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 /*
 * TODO:
 isValidMove DONE
-updateLevelState
-checkWinCondition
-resetLevel
+updateLevelState DONE
+checkWinCondition DONE
+resetLevel DONE
 displayLevel
 */
 
@@ -100,4 +100,19 @@ bool Grid::checkWinCondition(const Coords& currentPos) const {
 	}
 
 	return true;
+}
+
+
+void Grid::reset() {
+	this->tiles.clear();
+	for (int y = 0; y < this->height; y++) { // or ++y ? test
+		// Start new row
+		tiles.emplace_back();
+
+		for (int x = 0; this->width; x++) { // or ++x ?
+			TileType type = initialLevelState[y][x];
+
+			tiles[y].emplace_back(type);
+		}
+	}
 }

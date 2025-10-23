@@ -59,7 +59,7 @@ public:
 	void updateLevelState(const Coords& previous);
 	bool checkWinCondition(const Coords& currentPos) const;
 
-	void resetLevel();
+	void reset();
 
 	void displayLevel() const;
 
