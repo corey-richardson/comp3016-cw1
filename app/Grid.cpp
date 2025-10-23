@@ -4,8 +4,8 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	/* NOTE: Constructor needs to populate the tiles vector, dynamic memory allocation preferred
 	Then, record game goal points and walkable tiles */
 
-	if (levelData.empty()) {
-		std::cerr << "Level data is empty!" << std::endl;
+	if (levelData.empty() || levelData[0].empty()) {
+		std::cerr << "Level data is empty or invalid!" << std::endl;
 		return; // throw
 	}
 
@@ -14,22 +14,27 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	this->width = levelData[0].size();
 
 	tiles.reserve(this->height);
-	for (int y = 0; y < this->height; y++) { // or ++y ? test
+
+	/* size_t should be preferred over int when indexing into an STL vector
+	unsigned int *could* be used to avoid conversion requirement BUT may be smaller
+	than size_t on some architectures */
+
+	for (size_t y = 0; y < this->height; ++y) { // ++y avoids unnecassary copies
 		// Start new row
 		tiles.emplace_back();
 
-		for (int x = 0; this->width; x++) { // or ++x ?
+		for (size_t x = 0; x < this->width; ++x) {
 			TileType type = levelData[y][x]; // TODO: needs converting from char to TileType, handle in LevelLoader or here?
 			
 			tiles[y].emplace_back(type);
 
 			// Track the Start and End points positions
 			if (type == TileType::Start) {
-				this->startCoords = { x, y };
+				this->startCoords = { static_cast<int>(x), static_cast<int>(y) };
 				this->remainingWalkableTiles++;
 			}
 			else if (type == TileType::End) {
-				this->endCoords = { x, y };
+				this->endCoords = { static_cast<int>(x), static_cast<int>(y) };
 				this->remainingWalkableTiles++;
 			}
 			else if (type == TileType::Walkable) {
@@ -40,14 +45,6 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	}
 }
 
-/*
-* TODO:
-isValidMove DONE
-updateLevelState DONE
-checkWinCondition DONE
-resetLevel DONE
-displayLevel
-*/
 
 bool Grid::isInBounds(const Coords& target) const {
 	return target.x >= 0 && target.x < this->width &&
@@ -105,11 +102,11 @@ bool Grid::checkWinCondition(const Coords& currentPos) const {
 
 void Grid::reset() {
 	this->tiles.clear();
-	for (int y = 0; y < this->height; y++) { // or ++y ? test
+	for (size_t y = 0; y < this->height; ++y) {
 		// Start new row
 		tiles.emplace_back();
 
-		for (int x = 0; this->width; x++) { // or ++x ?
+		for (size_t x = 0; this->width; ++x) {
 			TileType type = initialLevelState[y][x];
 
 			tiles[y].emplace_back(type);
@@ -119,8 +116,8 @@ void Grid::reset() {
 
 
 void Grid::display() const {
-	for (int y = 0; y < this->height; y++) {
-		for (int x = 0; x < this->width; x++) {
+	for (size_t y = 0; y < this->height; ++y) {
+		for (size_t x = 0; x < this->width; ++x) {
 			char cell = Tile::getDisplayChar(tiles[y][x].getType());
 			std::cout << cell << " ";
 		}
