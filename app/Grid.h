@@ -33,6 +33,9 @@ private:
 
 	// Win condition; sum of remaining Start, End and Walkable Tiles
 	int remainingWalkableTiles = 0;
+	void decrementWalkableTiles() {
+		this->remainingWalkableTiles--;
+	}
 
 	bool isInBounds(const Coords& coords) const;
 
@@ -53,7 +56,7 @@ public:
 
 	/* Game Logic Methods */
 	bool isValidMove(const Coords& target) const;
-	void updateLevelState(const Coords& origin, const Coords* target);
+	void updateLevelState(const Coords& previous);
 	bool checkWinCondition(const Coords& currentPos) const;
 
 	void resetLevel();

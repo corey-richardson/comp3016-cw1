@@ -67,6 +67,8 @@ bool Grid::isValidMove(const Coords& target) const {
 
 	TileType targetTileType = targetTile.getType();
 	if (targetTileType == TileType::Void ||
+		targetTileType == TileType::Start || // Can't revisit Start tile, unless this 
+											 // becomes an intended gameplay mechanic?
 		targetTileType == TileType::Visited ||
 		targetTileType == TileType::Invalid) {
 		
@@ -75,4 +77,23 @@ bool Grid::isValidMove(const Coords& target) const {
 	}
 
 	return true;
+}
+
+
+void Grid::updateLevelState(const Coords& previous) {
+	/* Mark the tile the player just moved away from as visited */
+	if (this->tiles[previous.x][previous.y].getType() != TileType::Start) {
+		this->tiles[previous.x][previous.y].setType(TileType::Visited);
+		this->decrementWalkableTiles();
+	}
+}
+
+
+bool Grid::checkWinCondition(const Coords& currentPos) const {
+	/* At end point tile and remaining walkable tiles is 0 */
+	if (currentPos == this->endCoords && this->getRemainingWalkableTiles() == 0) {
+		return true;
+	}
+
+	return false;
 }
