@@ -116,3 +116,35 @@ void Grid::reset() {
 		}
 	}
 }
+
+
+void Grid::display() const {
+	for (int y = 0; y < this->height; y++) {
+		for (int x = 0; x < this->width; x++) {
+			char cell;
+			switch (tiles[y][x].getType()) {
+				case TileType::Void: 
+					cell = ' '; 
+					break;
+				case TileType::Walkable: 
+					cell = '#'; 
+					break;
+				case TileType::Start: 
+					cell = 'S'; 
+					break;
+				case TileType::End: 
+					cell = 'E'; 
+					break;
+				case TileType::Visited:
+					cell = '*';
+					break;
+				case TileType::Invalid:
+				default:
+					cell = '?';
+					break;
+			}
+			std::cout << cell << " ";
+		}
+		std::cout << "\n";
+	}
+}

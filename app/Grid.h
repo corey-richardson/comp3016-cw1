@@ -61,7 +61,7 @@ public:
 
 	void reset();
 
-	void displayLevel() const;
+	void display() const;
 
 };
 
