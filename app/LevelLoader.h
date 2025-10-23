@@ -7,7 +7,10 @@
 #include <stdexcept>
 #include "Tile.h"
 
-// Could create a custom exception type?
+class LevelLoadException : public std::runtime_error {
+public:
+	LevelLoadException(const std::string& message) : std::runtime_error("Level Load Error: " + message) {}
+};
 
 class LevelLoader {
 public:
