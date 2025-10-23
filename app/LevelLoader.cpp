@@ -1,6 +1,31 @@
 #include "LevelLoader.h"
 
 /**
+* @brief Converts a character read from the level file to it's corresponding TileType
+* @param c The character read from a level file
+* @return The corresponding TileType, or TileType::Invalid if character is unknown
+*/
+TileType LevelLoader::charToTileType(char c) {
+	switch (c) {
+	case '.':
+	case ' ':
+		return TileType::Void;
+	case '#':
+		return TileType::Walkable;
+	case 'S':
+		return TileType::Start;
+	case 'E':
+		return TileType::End;
+	case '*':
+		return TileType::Visited;
+	case '?':
+	default:
+		return TileType::Invalid;
+	}
+}
+
+
+/**
 * @brief Loads and parses a level from a file into a 2D vector of TileTypes
 * @param filename The path to the level (blueprint?) file
 * @return levelData A 2D vector of TileTypes
@@ -9,7 +34,7 @@
 * 2. File contains invalid characters that can't be parsed
 * 3. File line have inconsistent lengths
 */
-static std::vector<std::vector<TileType>> loadLevel(const std::string& filename) {
+std::vector<std::vector<TileType>> LevelLoader::loadLevel(const std::string& filename) {
 	std::ifstream file(filename); // ios::in
 
 	if (!file.is_open()) {
@@ -31,7 +56,7 @@ static std::vector<std::vector<TileType>> loadLevel(const std::string& filename)
 			}
 
 			for (char c : line) {
-				TileType type = Tile::charToTileType(c);
+				TileType type = charToTileType(c);
 
 				if (type == TileType::Invalid) {
 					// https://stackoverflow.com/questions/17201590/how-can-i-create-a-string-from-a-single-character

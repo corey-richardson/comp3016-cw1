@@ -24,26 +24,6 @@ public:
 	}
 
 
-	static TileType charToTileType(char c) {
-		switch (c) {
-			case '.':
-			case ' ':
-				return TileType::Void;
-			case '#':
-				return TileType::Walkable;
-			case 'S':
-				return TileType::Start;
-			case 'E':
-				return TileType::End;
-			case '*':
-				return TileType::Visited;
-			case '?':
-			default:
-				return TileType::Invalid;
-		}
-	}
-
-
 	static char tileTypeToChar(TileType type) {
 		switch (type) {
 			case TileType::Void:

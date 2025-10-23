@@ -12,7 +12,9 @@ public:
 	LevelLoadException(const std::string& message) : std::runtime_error("Level Load Error: " + message) {}
 };
 
-class LevelLoader {
+static class LevelLoader {
+private:
+	static TileType charToTileType(char c);
 public:
 	static std::vector<std::vector<TileType>> loadLevel(const std::string& filename);
 };
