@@ -10,6 +10,7 @@ static std::vector<std::vector<TileType>> loadLevel(const std::string& filename)
 	std::vector<std::vector<TileType>> levelData;
 
 	std::string line;
+	int lineLength = -1;
 
 	try {
 		while (!file.eof()) {
@@ -36,6 +37,13 @@ static std::vector<std::vector<TileType>> loadLevel(const std::string& filename)
 			// Skip empty lines
 			if (row.empty()) {
 				continue;
+			}
+
+			if (lineLength == -1) { // First line with data
+				lineLength = row.size();
+			}
+			else if (row.size() != lineLength) {
+				throw LevelLoadException("Inconsistent line length in level file " + filename);
 			}
 
 			levelData.push_back(row);
