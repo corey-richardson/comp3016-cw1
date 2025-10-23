@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <map>
 
 enum class TileType {
 	Void,
@@ -9,7 +10,6 @@ enum class TileType {
 	Visited,
 	Invalid,
 };
-
 
 class Tile {
 
@@ -23,9 +23,30 @@ public:
 		return this->type;
 	}
 
+
+	char static getDisplayChar(TileType type) {
+		switch (type) {
+			case TileType::Void:
+				return ' ';
+			case TileType::Walkable:
+				return '#';
+			case TileType::Start:
+				return 'S';
+			case TileType::End:
+				return 'E';
+			case TileType::Visited:
+				return '*';
+			case TileType::Invalid:
+			default:
+				return '?';
+		}
+	}
+
+
 	void setType(TileType newType) {
 		this->type = newType;
 	}
+
 
 	bool isWalkable() const {
 		return (this->type == TileType::Walkable ||
