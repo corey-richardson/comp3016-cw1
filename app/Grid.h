@@ -8,8 +8,8 @@
 
 
 struct Coords {
-	int x;
-	int y;
+	size_t x;
+	size_t y;
 
 	// Compare whether two coordinates point to the same Tile
 	// geeksforgeeks.org/cpp/operator-overloading-cpp/
@@ -57,7 +57,7 @@ public:
 	/* Game Logic Methods */
 	bool isValidMove(const Coords& target) const;
 	void updateLevelState(const Coords& previous);
-	bool checkWinCondition(const Coords& currentPos) const;
+	bool checkWinConditions(const Coords& currentPos) const;
 
 	void reset();
 
