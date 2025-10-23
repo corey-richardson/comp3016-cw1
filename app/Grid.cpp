@@ -9,6 +9,7 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 		return; // throw
 	}
 
+	// TODO: conversion from 'size_t' to 'int', possible loss of data
 	this->height = levelData.size();
 	this->width = levelData[0].size();
 
@@ -41,20 +42,23 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 
 /*
 * TODO:
-isValidMove
+isValidMove DONE
 updateLevelState
 checkWinCondition
 resetLevel
 displayLevel
 */
 
+bool Grid::isInBounds(const Coords& target) const {
+	return target.x >= 0 && target.x < this->width &&
+		target.y >= 0 && target.y < this->height;
+}
+
+
 bool Grid::isValidMove(const Coords& target) const {
 	/* Check not going out of bounds of Grid
 	Check TileType not Void, Visitied (or Invalid?) */
-	bool inBounds = target.x >= 0 && target.x < this->width &&
-		target.y >= 0 && target.y < this->height;
-
-	if (!inBounds) {
+	if (!isInBounds(target)) {
 		std::cerr << "Invalid Move: Out of bounds." << std::endl;
 		return false;
 	}

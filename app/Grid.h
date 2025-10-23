@@ -34,6 +34,8 @@ private:
 	// Win condition; sum of remaining Start, End and Walkable Tiles
 	int remainingWalkableTiles = 0;
 
+	bool isInBounds(const Coords& coords) const;
+
 public:
 	/* Constructor */
 	// Recieves level data from the LevelLoader class
