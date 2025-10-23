@@ -1,4 +1,3 @@
-#pragma once
 #ifndef  GRID_H
 #define GRID_H
 
@@ -8,8 +7,8 @@
 
 
 struct Coords {
-	size_t x;
-	size_t y;
+	int x;
+	int y;
 
 	// Compare whether two coordinates point to the same Tile
 	// geeksforgeeks.org/cpp/operator-overloading-cpp/

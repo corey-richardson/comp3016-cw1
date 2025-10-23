@@ -34,11 +34,11 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 
 			// Track the Start and End points positions
 			if (type == TileType::Start) {
-				this->startCoords = { x, y };
+				this->startCoords = { static_cast<int>(x), static_cast<int>(y) };
 				this->remainingWalkableTiles++;
 			}
 			else if (type == TileType::End) {
-				this->endCoords = { x, y };
+				this->endCoords = { static_cast<int>(x), static_cast<int>(y) };
 				this->remainingWalkableTiles++;
 			}
 			else if (type == TileType::Walkable) {
@@ -151,7 +151,7 @@ void Grid::reset() {
 void Grid::display() const {
 	for (size_t y = 0; y < this->height; ++y) {
 		for (size_t x = 0; x < this->width; ++x) {
-			char cell = Tile::getDisplayChar(tiles[y][x].getType());
+			char cell = Tile::tileTypeToChar(tiles[y][x].getType());
 			std::cout << cell << " ";
 		}
 		std::cout << "\n";
