@@ -246,6 +246,14 @@ void Game::checkGameState() {
 * Runs until game over or grid fails to load
 */
 void Game::run() {
+	/* TODO
+	"Menu" screen detailing input options
+	*/
+
+	/* TODO
+	Endless random mode?
+	*/
+
 	while (!gameOver) {
 		if (this->grid == nullptr) {
 			break;
