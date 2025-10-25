@@ -2,6 +2,22 @@
 #include <fstream>
 #include <iostream>
 
+// Could the memory management issues I was having be resolved by unique_ptr?
+// 
+// """Using std::unique_ptr would make the Game class significantly safer and 
+// easier to maintain by eliminating all manual memory management and 
+// preventing potential memory leaks."""
+//
+// """std::unique\_ptr enforces RAII (Resource Acquisition Is Initialization), 
+// guaranteeing memory is freed when the pointer goes out of scope"""
+
+
+/**
+* @brief Convert a keyboard input to a movement direction
+* @param inputChar W/A/S/D, case-insensitive
+* @return A Direction value
+* @throws std::runtime_error if the input character does not correspond to an expected value. Handled in Game::handleInput
+*/
 Direction Game::charToDirection(char inputChar) {
 	// https://en.cppreference.com/w/cpp/string/byte/tolower.html
 	switch (std::tolower(inputChar)) {
@@ -19,6 +35,11 @@ Direction Game::charToDirection(char inputChar) {
 }
 
 
+/**
+* @brief Loads a list of level filenames into a vector object from a manifest file
+* @param levelManifestFilename The path to the manifest file containing the list
+* @throws LevelLoadException if the manifest file cannot be opened or is empty
+*/
 void Game::loadLevelManifest(const std::string& levelManifestFilename) {
 	std::ifstream file(levelManifestFilename);
 
@@ -42,6 +63,9 @@ void Game::loadLevelManifest(const std::string& levelManifestFilename) {
 }
 
 
+/**
+* @brief Safely deletes the current instance of PlayerCursor
+*/
 void Game::deletePlayerCursor() {
 	if (player != nullptr) {
 		delete player;
@@ -50,6 +74,9 @@ void Game::deletePlayerCursor() {
 }
 
 
+/**
+* @brief Safely deletes the current instance of Grid
+*/
 void Game::deleteGrid() {
 	if (grid != nullptr) {
 		delete grid;
@@ -58,12 +85,18 @@ void Game::deleteGrid() {
 }
 
 
+/**
+* @brief Safely cleans up the current level by deleting the Grid and PlayerCursor instances
+*/
 void Game::cleanupLevel() {
 	this->deletePlayerCursor();
 	this->deleteGrid();
 }
 
 
+/**
+* @brief Resets the Grid layout and resets the PlayerCursor location to the levels start
+*/
 void Game::resetCurrentLevelState() {
 	if (grid == nullptr) {
 		return;
@@ -75,6 +108,11 @@ void Game::resetCurrentLevelState() {
 }
 
 
+/**
+* @brief Loads the next level from the level manifest
+* Clears any existing level resources from the memory
+* @throws LevelLoadException if a level file fails to load. Attempts to skip and load the next level instead.
+*/
 void Game::loadNextLevel() {
 	this->cleanupLevel();
 
@@ -99,6 +137,10 @@ void Game::loadNextLevel() {
 }
 
 
+/**
+* @brief Constructs a Game instance and loads the first level to memory
+* @param levelManifestFilename The path to the Level Manifest file
+*/
 Game::Game(const std::string& levelManifestFilename) {
 	try {
 		loadLevelManifest(levelManifestFilename);
@@ -113,11 +155,21 @@ Game::Game(const std::string& levelManifestFilename) {
 }
 
 
+/**
+* @brief Desructor for the Game class
+* Cleans up dynamically allocated resources used by the current level,
+* such as the Grid and Player Cursor
+*/
 Game::~Game() {
 	this->cleanupLevel();
 }
 
 
+/**
+* @brief Handles the player input for movement or a player-induced level reset
+* @return True if the game should continue (move is valid) or false if the input
+* failed or move was invalid
+*/
 bool Game::handleInput() {
 	char input;
 	std::cout << "\nMove (WASD): ";
@@ -153,6 +205,10 @@ bool Game::handleInput() {
 }
 
 
+/**
+* @brief Checks the current game state and reacts to level completion or 
+* unsolvable states
+*/
 void Game::checkGameState() {
 	if (grid->checkWinConditions(player->getCurrentPosition())) {
 		std::cout << "Level " << this->currentLevelIndex + 1 << " solved!\n" << std::endl;
@@ -170,6 +226,13 @@ void Game::checkGameState() {
 }
 
 
+/**
+* @brief Runs the main game loop
+* Displays the current grid state
+* Processes player input
+* Checks the game state for win-fail conditions
+* Runs until game over or grid fails to load
+*/
 void Game::run() {
 	while (!gameOver) {
 		if (this->grid == nullptr) {
