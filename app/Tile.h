@@ -1,6 +1,15 @@
-#pragma once
 #include <iostream>
 #include <map>
+
+/* TODO:
+Convert Tile to an abstract class
+Then,
+
+StandardTile : public Tile
+MultiVisitTile : public Tile
+
+This demonstrates polymorphism!
+*/
 
 enum class TileType {
 	Void,
