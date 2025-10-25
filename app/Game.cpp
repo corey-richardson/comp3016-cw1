@@ -116,6 +116,12 @@ void Game::resetCurrentLevelState() {
 void Game::loadNextLevel() {
 	this->cleanupLevel();
 
+	if (this->currentLevelIndex >= this->levelFiles.size()) {
+		std::cout << "\n\nAll levels have been completed! Thank you for playing!" << std::endl;
+		this->gameOver = true;
+		return;
+	}
+
 	const std::string& filename = levelFiles[this->currentLevelIndex];
 
 	try {
