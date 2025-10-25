@@ -35,13 +35,13 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 			// Track the Start and End points positions
 			if (type == TileType::Start) {
 				this->startCoords = { static_cast<int>(x), static_cast<int>(y) };
-				this->remainingWalkableTiles++;
+				// this->remainingWalkableTiles++;
 			}
 			else if (type == TileType::End) {
 				this->endCoords = { static_cast<int>(x), static_cast<int>(y) };
-				this->remainingWalkableTiles++;
+				// this->remainingWalkableTiles++;
 			}
-			else if (type == TileType::Walkable) {
+			if (type == TileType::Walkable) {
 				this->remainingWalkableTiles++;
 			}
 
@@ -108,26 +108,6 @@ void Grid::updateLevelState(const Coords& previous) {
 
 
 /**
-* @brief Check if the win conditions have been met
-* 1. The currentPos matches the endCoords of the level
-* 2. All walkable tiles have been visited
-* @param currentPos The co-ordinate of the current position
-* @return True if the win conditions have been reached, else guarding falses
-*/
-bool Grid::checkWinConditions(const Coords& currentPos) const {
-	if (!(currentPos == this->endCoords)) { // Uses overloaded '==' operator
-		return false;
-	}
-
-	if (this->getRemainingWalkableTiles() != 0) {
-		return false;
-	}
-
-	return true;
-}
-
-
-/**
 * @brief Resets the Grid to its initial state for a level restart
 */
 void Grid::reset() {
@@ -146,12 +126,36 @@ void Grid::reset() {
 
 
 /**
+* @brief Check if the win conditions have been met
+* 1. The currentPos matches the endCoords of the level
+* 2. All walkable tiles have been visited
+* @param currentPos The co-ordinate of the current position
+* @return True if the win conditions have been reached, else guarding falses
+*/
+bool Grid::checkWinConditions(const Coords& currentPosition) {
+	if (currentPosition == this->endCoords && this->getRemainingWalkableTiles() == 0) {
+		return true; // Win
+	}
+
+	return false; // Not yet finished
+}
+
+
+/**
 * @brief Prints the current state of the game grid to the console
 */
-void Grid::display() const {
+void Grid::display(const Coords& playerPostion) const {
+	std::cout << "\n";
 	for (size_t y = 0; y < this->height; ++y) {
 		for (size_t x = 0; x < this->width; ++x) {
-			char cell = Tile::tileTypeToChar(tiles[y][x].getType());
+			char cell;
+
+			if (x == playerPostion.x && y == playerPostion.y) {
+				std::cout << "P" << " ";
+				continue;
+			}
+
+			cell = Tile::tileTypeToChar(tiles[y][x].getType());
 			std::cout << cell << " ";
 		}
 		std::cout << "\n";

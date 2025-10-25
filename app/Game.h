@@ -19,6 +19,11 @@ private:
 	bool gameOver = false;
 	unsigned int currentLevelIndex = 0;
 
+	void deletePlayerCursor();
+	void deleteGrid();
+	void cleanupLevel();
+	void resetCurrentLevelState();
+
 	void loadLevelManifest(const std::string& levelManifestFilename);
 	void loadNextLevel();
 

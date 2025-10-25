@@ -56,11 +56,11 @@ public:
 	/* Game Logic Methods */
 	bool isValidMove(const Coords& target) const;
 	void updateLevelState(const Coords& previous);
-	bool checkWinConditions(const Coords& currentPos) const;
+	bool checkWinConditions(const Coords& currentPos);
 
 	void reset();
 
-	void display() const;
+	void display(const Coords& playerPostion) const;
 
 };
 

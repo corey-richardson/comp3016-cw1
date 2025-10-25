@@ -21,10 +21,10 @@ Coords PlayerCursor::calculateTarget(Direction direction) const {
 	switch (direction) {
 
 		case Direction::Up:
-			target.y++;
+			target.y--;
 			break;
 		case Direction::Down:
-			target.y--;
+			target.y++;
 			break;
 
 		case Direction::Right:
@@ -47,15 +47,13 @@ Coords PlayerCursor::calculateTarget(Direction direction) const {
 */
 bool PlayerCursor::move(Direction direction) {
 	Coords newPosition = calculateTarget(direction);
+
 	if (!grid.isValidMove(newPosition)) {
-		// Not a valid move
-		grid.reset();
 		return false;
 	}
 
 	grid.updateLevelState(this->currentPosition);
 	this->currentPosition = newPosition;
 
-	std::cout << "Player moved to (" << currentPosition.x << ", " << currentPosition.y << ")." << std::endl;
 	return true;
 }
