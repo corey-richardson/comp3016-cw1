@@ -187,6 +187,12 @@ bool Game::handleInput() {
 
 	input = std::tolower(input);
 
+	if (input == 'q') {
+		std::cout << "Quitting game..." << std::endl;
+		gameOver = true;
+		return false;
+	}
+
 	if (input == 'r') {
 		std::cout << "Resetting level..." << std::endl;
 
