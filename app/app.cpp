@@ -4,19 +4,20 @@
 #include <iostream>
 #include <string>
 
-#include "Tile.h"
-#include "Grid.h"
-#include "LevelLoader.h"
+#include "Game.h"
 
 int main()
 {
-    std::string filename = "levels/level-example.txt";
+	const std::string levelManifestFilename = "levels/level-manifest.txt";
 
-    Grid level = Grid(LevelLoader::loadLevel(filename));
-    level.display();
+	try {
+		Game game(levelManifestFilename);
+		game.run();
+	}
+	catch (...) {
+		std::cerr << "Game crashed :(" << std::endl;
+		return 1;
+	}
 
-    std::cout << "Start Coords: " << level.getStartCoords().x << ", " << level.getStartCoords().y << std::endl;
-    std::cout << "End Coords:   " << level.getEndCoords().x << ", " << level.getEndCoords().y << std::endl;
-
-    std::cout << "Walkable Tiles: " << level.getRemainingWalkableTiles() << std::endl;
+	return 0;
 }

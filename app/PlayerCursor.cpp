@@ -49,6 +49,7 @@ bool PlayerCursor::move(Direction direction) {
 	Coords newPosition = calculateTarget(direction);
 	if (!grid.isValidMove(newPosition)) {
 		// Not a valid move
+		grid.reset();
 		return false;
 	}
 
