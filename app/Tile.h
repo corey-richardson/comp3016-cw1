@@ -11,6 +11,8 @@ MultiVisitTile : public Tile
 This demonstrates polymorphism!
 */
 
+// https://www.geeksforgeeks.org/cpp/virtual-base-class-in-c/
+
 enum class TileType {
 	Void,
 	Walkable,
@@ -21,46 +23,21 @@ enum class TileType {
 };
 
 class Tile {
-
-private:
+protected:
 	TileType type;
+	Tile(TileType type = TileType::Invalid) : type(type) {}
 
 public:
-	Tile(TileType type = TileType::Invalid) : type(type) {}
+	virtual ~Tile() = default;
 
 	TileType getType() const {
 		return this->type;
 	}
 
+	virtual char tileTypeToChar(TileType type) const;
 
-	static char tileTypeToChar(TileType type) {
-		switch (type) {
-			case TileType::Void:
-				return ' ';
-			case TileType::Walkable:
-				return '#';
-			case TileType::Start:
-				return 'S';
-			case TileType::End:
-				return 'E';
-			case TileType::Visited:
-				return '*';
-			case TileType::Invalid:
-			default:
-				return '?';
-		}
-	}
-
-
-	void setType(TileType newType) {
-		this->type = newType;
-	}
-
-
-	bool isWalkable() const {
-		return (this->type == TileType::Walkable ||
-				this->type == TileType::Start ||
-				this->type == TileType::End
-		);
-	}
+	/* '= 0' notates the methods that a derived class MUST override a virtual method
+	Pure Virtual */
+	virtual bool isWalkable() const = 0;
+	virtual void updateStateOnExit() = 0;
 };
