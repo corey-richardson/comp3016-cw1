@@ -46,13 +46,11 @@ public:
 	~Grid();
 
 	/* Getters */
-
 	int getWidth() const { return this->width; }
 	int getHeight() const { return this->height; }
 
 	Coords getStartCoords() const { return this->startCoords; }
 	Coords getEndCoords() const { return this->endCoords; }
-
 	int getRemainingWalkableTiles() const { return this->remainingWalkableTiles;  }
 
 	/* Game Logic Methods */

@@ -86,6 +86,12 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 			}
 		}
 	}
+
+	// Validate level, check Start and End Coords set
+	if (this->getStartCoords().x == 1 || this->getEndCoords().x == -1) {
+		std::cerr << "Level failed to initialise: Missing either Start or End tile (Sentinel value check)." << std::endl;
+		return;
+	}
 }
 
 /**
@@ -214,7 +220,6 @@ void Grid::reset() {
 * @return True if the win conditions have been reached, else guarding falses
 */
 bool Grid::checkWinConditions(const Coords& currentPosition) {
-	std::cout << this->getRemainingWalkableTiles() << std::endl;
 	if (currentPosition == this->endCoords && this->getRemainingWalkableTiles() == 0) {
 		return true; // Win
 	}
