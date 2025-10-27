@@ -19,13 +19,14 @@
 * @param type The TileType indicating which type of derived Tile to create
 * @return A pointer to the allocated Tile object.
 */
-Tile* Grid::createNewTile(TileType type) {
+std::unique_ptr<Tile> Grid::createNewTile(TileType type) {
 	// TODO: Update to use a smart pointer; improves memory safety
+	// https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170
 	if (type == TileType::MultiVisit) {
-		return new MultiVisitTile(type, 2);
+		return std::make_unique<MultiVisitTile>(type, 2);
 	}
 	else {
-		return new StandardTile(type);
+		return std::make_unique<StandardTile>(type);
 	}
 }
 
@@ -69,8 +70,7 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 
 		for (size_t x = 0; x < this->width; ++x) {
 			TileType type = levelData[y][x];
-			Tile* newTile = createNewTile(type);
-			tiles[y].emplace_back(newTile);
+			tiles[y].emplace_back(createNewTile(type));
 
 			if (type == TileType::MultiVisit) {
 				this->remainingWalkableTiles += 2;
@@ -90,20 +90,6 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	// Validate level, check Start and End Coords set
 	if (this->getStartCoords().x == 1 || this->getEndCoords().x == -1) {
 		throw LevelLoadException("Level failed to initialise: Missing either Start or End tile (Sentinel value check).");
-	}
-}
-
-/**
-* @brief Destructor for the Grid class. 
-* 
-* Handles memory cleanup of Tile objects within the `tiles` vector.
-*/
-Grid::~Grid() {
-	for (auto& row : tiles) {
-		for (Tile* tile : row) {
-			delete tile;
-		}
-		row.clear();
 	}
 }
 
@@ -137,7 +123,9 @@ bool Grid::isValidMove(const Coords& target) const {
 		return false;
 	}
 
-	const Tile* targetTile = tiles[target.y][target.x];
+	const Tile* targetTile = tiles[target.y][target.x].get(); // Get returns a non-owning
+															  // raw pointer. unique_ptr
+															  // still handles lifecycle
 
 	// 2
 	if (!targetTile->isWalkable()) {
@@ -161,7 +149,7 @@ bool Grid::isValidMove(const Coords& target) const {
 * @param previous The co-ordinate of the previously occupied tile
 */
 void Grid::updateLevelState(const Coords& previous) {
-	Tile* previousTile = this->tiles[previous.y][previous.x];
+	Tile* previousTile = this->tiles[previous.y][previous.x].get();
 	if (previousTile->updateStateOnExit()) {
 		this->decrementWalkableTiles();
 	}
@@ -171,22 +159,13 @@ void Grid::updateLevelState(const Coords& previous) {
 
 /**
 * @brief Resets the Grid to its initial state for a level restart
-* 
-* Deletes allocated Tile objects and clears the 2D `tiles` vector.
-* 
+
 * Recreates the tiles dynamically based on the `initialLevelState`.
 * 
 * Resets `remainingWalkableTiles` to its initial value to correctly track win conditions.
 * 
 */
 void Grid::reset() {
-	for (auto& row : tiles) {
-		for (Tile* tile : row) {
-			delete tile;
-		}
-		row.clear();
-	}
-
 	this->tiles.clear();
 	this->remainingWalkableTiles = 0;
 
@@ -197,8 +176,7 @@ void Grid::reset() {
 		for (size_t x = 0; x < this->width; ++x) {
 			TileType type = initialLevelState[y][x];
 
-			Tile* newTile = createNewTile(type);
-			tiles[y].emplace_back(newTile);
+			tiles[y].emplace_back(createNewTile(type));
 
 			if (type == TileType::MultiVisit) {
 				this->remainingWalkableTiles += 2;

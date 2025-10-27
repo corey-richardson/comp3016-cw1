@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 #include "Tile.h"
 
 
@@ -20,7 +21,7 @@ struct Coords {
 
 class Grid {
 private:
-	std::vector<std::vector<Tile*>> tiles;
+	std::vector<std::vector<std::unique_ptr<Tile>>> tiles;
 	// Store the initial state of the level to be used for a reset
 	std::vector<std::vector<TileType>> initialLevelState;
 
@@ -37,13 +38,13 @@ private:
 	}
 
 	bool isInBounds(const Coords& coords) const;
-	Tile* createNewTile(TileType type);
+	std::unique_ptr<Tile> createNewTile(TileType type);
 
 public:
 	/* Constructor */
 	// Recieves level data from the LevelLoader class
 	Grid(const std::vector<std::vector<TileType>>& levelData);
-	~Grid();
+	~Grid() = default;
 
 	/* Getters */
 	int getWidth() const { return this->width; }
