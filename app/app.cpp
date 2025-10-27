@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Game.h"
+#include "RandomGame.h"
 #include "LevelLoader.h"
 
 int main(int argc, char *argv[])
@@ -28,8 +29,8 @@ int main(int argc, char *argv[])
 	}
 
 	try {
-		Game game(manifest);
-		game.run();
+		Game game;
+		game.run(manifest);
 	}
 	catch (const LevelLoadException& e) {
 		std::cerr << "A required game file could not be loaded!" << std::endl;

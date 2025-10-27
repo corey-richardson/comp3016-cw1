@@ -132,6 +132,7 @@
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="MultiVisitTile.cpp" />
     <ClCompile Include="PlayerCursor.cpp" />
+    <ClCompile Include="RandomGame.cpp" />
     <ClCompile Include="StandardTile.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
@@ -141,6 +142,7 @@
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="MultiVisitTile.h" />
     <ClInclude Include="PlayerCursor.h" />
+    <ClInclude Include="RandomGame.h" />
     <ClInclude Include="StandardTile.h" />
     <ClInclude Include="Tile.h" />
   </ItemGroup>

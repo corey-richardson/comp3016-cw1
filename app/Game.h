@@ -11,7 +11,7 @@
 
 class Game
 {
-private:
+protected:
 	Grid* grid = nullptr;
 	PlayerCursor* player = nullptr;
 
@@ -24,18 +24,21 @@ private:
 	void cleanupLevel();
 	void resetCurrentLevelState();
 
-	void loadLevelManifest(const std::string& levelManifestFilename);
-	void loadNextLevel();
+	virtual void loadLevelManifest(const std::string& levelManifestFilename);
+	virtual void loadNextLevel();
 
 	static Direction charToDirection(char inputChar);
 	bool handleInput();
 	void checkGameState();
+	virtual void onLevelSolved();
+
+	void initialise(const std::string& levelManifestFilename);
 
 public:
-	Game(const std::string& levelManifestFilename);
+	Game();
 	~Game();
 
-	void run();
+	void run(const std::string& levelManifestFilename);
 };
 
 #endif

@@ -41,6 +41,7 @@ Direction Game::charToDirection(char inputChar) {
 * @throws LevelLoadException if the manifest file cannot be opened or is empty
 */
 void Game::loadLevelManifest(const std::string& levelManifestFilename) {
+	std::cout << "Standard!" << std::endl;
 	std::ifstream file(levelManifestFilename);
 
 	if (!file.is_open()) {
@@ -144,10 +145,10 @@ void Game::loadNextLevel() {
 
 
 /**
-* @brief Constructs a Game instance and loads the first level to memory
+* @brief Initialised the game by loading the level manifest and the first level
 * @param levelManifestFilename The path to the Level Manifest file
 */
-Game::Game(const std::string& levelManifestFilename) {
+void Game::initialise(const std::string& levelManifestFilename) {
 	try {
 		loadLevelManifest(levelManifestFilename);
 		loadNextLevel();
@@ -158,6 +159,11 @@ Game::Game(const std::string& levelManifestFilename) {
 
 		this->gameOver = true;
 	}
+}
+
+
+
+Game::Game() {
 }
 
 
@@ -218,13 +224,20 @@ bool Game::handleInput() {
 
 
 /**
+* @brief Default hook method that prints a message when a level has been successfully solved.
+*/
+void Game::onLevelSolved() {
+	std::cout << "\nLevel " << this->currentLevelIndex + 1 << " solved!\n" << std::endl;
+}
+
+
+/**
 * @brief Checks the current game state and reacts to level completion or 
 * unsolvable states
 */
 void Game::checkGameState() {
 	if (grid->checkWinConditions(player->getCurrentPosition())) {
-		std::cout << "Level " << this->currentLevelIndex + 1 << " solved!\n" << std::endl;
-
+		onLevelSolved();
 		this->currentLevelIndex++;
 		loadNextLevel();
 		return;
@@ -245,7 +258,7 @@ void Game::checkGameState() {
 * Checks the game state for win-fail conditions
 * Runs until game over or grid fails to load
 */
-void Game::run() {
+void Game::run(const std::string& levelManifestFilename) {
 	/* TODO
 	"Menu" screen detailing input options
 	*/
@@ -253,6 +266,7 @@ void Game::run() {
 	/* TODO
 	Endless random mode?
 	*/
+	this->initialise(levelManifestFilename);
 
 	while (!gameOver) {
 		if (this->grid == nullptr) {
