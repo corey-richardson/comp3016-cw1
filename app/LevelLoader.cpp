@@ -77,7 +77,7 @@ std::vector<std::vector<TileType>> LevelLoader::loadLevel(const std::string& fil
 			}
 
 			if (lineLength == -1) { // First line with data
-				lineLength = row.size();
+				lineLength = static_cast<int>(row.size());
 			}
 			else if (row.size() != lineLength) {
 				throw LevelLoadException("Inconsistent line length in level file " + filename);

@@ -58,9 +58,8 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 		throw LevelLoadException("Level data is empty or invalid!");
 	}
 
-	// TODO: conversion from 'size_t' to 'int', possible loss of data
-	this->height = levelData.size();
-	this->width = levelData[0].size();
+	this->height = static_cast<int>(levelData.size());
+	this->width = static_cast<int>(levelData[0].size());
 
 	tiles.reserve(this->height);
 
@@ -88,7 +87,7 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	}
 
 	// Validate level, check Start and End Coords set
-	if (this->getStartCoords().x == 1 || this->getEndCoords().x == -1) {
+	if (this->getStartCoords().x == -1 || this->getEndCoords().x == -1) {
 		throw LevelLoadException("Level failed to initialise: Missing either Start or End tile (Sentinel value check).");
 	}
 }
