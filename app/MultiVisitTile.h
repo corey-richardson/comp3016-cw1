@@ -3,10 +3,14 @@
 
 #include "Tile.h"
 
+/**
+* @brief Represents a Tile that can be visited multiple times on the game Grid.
+* Publicly inherits from the Tile base class.
+*/
 class MultiVisitTile : public Tile
 {
 public:
-	MultiVisitTile(TileType type, int numAllowedVisits);
+	MultiVisitTile(TileType type, int numAllowedVisits = 2);
 
 	bool isWalkable() const override;
 	bool updateStateOnExit() override;

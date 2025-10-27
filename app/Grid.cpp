@@ -3,7 +3,24 @@
 #include "MultiVisitTile.h"
 
 
+/**
+* @brief A factory method to create a new Tile instance based on the given type
+* 
+* Allocates memory based on the derived type:
+* 
+* - MultiVisitTile for TileType::MultiVisit
+* 
+* - StandardTile as a default
+* 
+* Method is extensible for future TileTypes, ie TrapTiles?
+* 
+* Grid destructor handles memory deallocation for Tile object
+* 
+* @param type The TileType indicating which type of derived Tile to create
+* @return A pointer to the allocated Tile object.
+*/
 Tile* Grid::createNewTile(TileType type) {
+	// TODO: Update to use a smart pointer; improves memory safety
 	if (type == TileType::MultiVisit) {
 		return new MultiVisitTile(type, 2);
 	}
@@ -14,11 +31,25 @@ Tile* Grid::createNewTile(TileType type) {
 
 
 /**
-* @brief Constructs a Grid object from a 2D vector of TileType enum values. Called from LevelLoader.
+* @brief Constructs a Grid object from a 2D vector of TileType enum values. 
+* 
+* Dynamically allocates memory for Tile objects for each position in the level.
+* 
+* Populates the 2D tiles member vector.
+* 
+* Records and counts:
+* 
+* - `startCoords` for the starting tile
+* 
+* - `endCoords` for the goal tile
+* 
+* - `remainingWalkableTiles` to track how many walkable visits remain for the win condition
+* 
 * @param levelData A 2D vector of TileType values representing a level
 */
 Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelState(levelData) {
-	/* NOTE: Constructor needs to populate the tiles vector, dynamic memory allocation preferred
+	/* NOTE: Constructor needs to populate the tiles vector, dynamic memory 
+	allocation is preferred
 	Then, record game goal points and walkable tiles */
 
 	if (levelData.empty() || levelData[0].empty()) {
@@ -31,10 +62,6 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	this->width = levelData[0].size();
 
 	tiles.reserve(this->height);
-
-	/* size_t should be preferred over int when indexing into an STL vector
-	unsigned int *could* be used to avoid conversion requirement BUT may be smaller
-	than size_t on some architectures */
 
 	for (size_t y = 0; y < this->height; ++y) { // ++y avoids unnecassary copies
 		// Start new row
@@ -61,7 +88,11 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	}
 }
 
-
+/**
+* @brief Destructor for the Grid class. 
+* 
+* Handles memory cleanup of Tile objects within the `tiles` vector.
+*/
 Grid::~Grid() {
 	for (auto& row : tiles) {
 		for (Tile* tile : row) {
@@ -85,8 +116,11 @@ bool Grid::isInBounds(const Coords& target) const {
 
 /**
 * @brief Validates whether a move is allowed or is a game fail-condition
+* 
 * 1. Check move doesn't go out of bounds of the Grid based on width and height
+* 
 * 2. Checks that the move is to a Tile that isWalkable (not Void or Visited)
+* 
 * 3. Checks that the move isn't revisiting the Start Tile
 * @param target The co-ordinate of the intended move
 * @return True if the move is valid, else false
@@ -118,7 +152,7 @@ bool Grid::isValidMove(const Coords& target) const {
 
 
 /**
-* @brief Mark the tile the player just moved away from as visited
+* @brief Updates the state of the Tile the player just moved away from
 * @param previous The co-ordinate of the previously occupied tile
 */
 void Grid::updateLevelState(const Coords& previous) {
@@ -132,6 +166,13 @@ void Grid::updateLevelState(const Coords& previous) {
 
 /**
 * @brief Resets the Grid to its initial state for a level restart
+* 
+* Deletes allocated Tile objects and clears the 2D `tiles` vector.
+* 
+* Recreates the tiles dynamically based on the `initialLevelState`.
+* 
+* Resets `remainingWalkableTiles` to its initial value to correctly track win conditions.
+* 
 */
 void Grid::reset() {
 	for (auto& row : tiles) {

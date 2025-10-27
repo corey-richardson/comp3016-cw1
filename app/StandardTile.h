@@ -3,6 +3,10 @@
 
 #include "Tile.h"
 
+/**
+* @brief Represents a Standard Tile on the game Grid. 
+* Publicly inherits from the Tile base class.
+*/
 class StandardTile : public Tile
 {
 public:
