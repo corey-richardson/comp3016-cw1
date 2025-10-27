@@ -4,16 +4,6 @@
 #include <iostream>
 #include <map>
 
-/* TODO:
-Convert Tile to an abstract class
-Then,
-
-StandardTile : public Tile
-MultiVisitTile : public Tile
-
-This demonstrates polymorphism!
-*/
-
 // https://www.geeksforgeeks.org/cpp/virtual-base-class-in-c/
 
 enum class TileType {
