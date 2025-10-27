@@ -1,3 +1,6 @@
+#ifndef TILE_H
+#define TILE_H
+
 #include <iostream>
 #include <map>
 
@@ -20,6 +23,7 @@ enum class TileType {
 	End,
 	Visited,
 	Invalid,
+	MultiVisit,
 };
 
 class Tile {
@@ -39,5 +43,7 @@ public:
 	/* '= 0' notates the methods that a derived class MUST override a virtual method
 	Pure Virtual */
 	virtual bool isWalkable() const = 0;
-	virtual void updateStateOnExit() = 0;
+	virtual bool updateStateOnExit() = 0;
 };
+
+#endif

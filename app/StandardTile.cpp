@@ -14,8 +14,10 @@ bool StandardTile::isWalkable() const {
 }
 
 
-void StandardTile::updateStateOnExit() {
+bool StandardTile::updateStateOnExit() {
 	if (this->type == TileType::Walkable) {
 		this->type = TileType::Visited;
+		return true;
 	}
+	return false;
 }

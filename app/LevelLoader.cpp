@@ -12,6 +12,8 @@ TileType LevelLoader::charToTileType(char c) {
 		return TileType::Void;
 	case '#':
 		return TileType::Walkable;
+	case '2':
+		return TileType::MultiVisit;
 	case 'S':
 		return TileType::Start;
 	case 'E':

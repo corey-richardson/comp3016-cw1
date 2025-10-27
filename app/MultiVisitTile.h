@@ -9,7 +9,7 @@ public:
 	MultiVisitTile(TileType type, int numAllowedVisits);
 
 	bool isWalkable() const override;
-	void updateStateOnExit() override;
+	bool updateStateOnExit() override;
 
 	char tileTypeToChar(TileType type) const override;
 

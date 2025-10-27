@@ -1,4 +1,17 @@
 #include "Grid.h"
+#include "StandardTile.h"
+#include "MultiVisitTile.h"
+
+
+Tile* Grid::createNewTile(TileType type) {
+	if (type == TileType::MultiVisit) {
+		return new MultiVisitTile(type, 2);
+	}
+	else {
+		return new StandardTile(type);
+	}
+}
+
 
 /**
 * @brief Constructs a Grid object from a 2D vector of TileType enum values. Called from LevelLoader.
@@ -29,23 +42,32 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 
 		for (size_t x = 0; x < this->width; ++x) {
 			TileType type = levelData[y][x];
-			
-			tiles[y].emplace_back(type);
+			Tile* newTile = createNewTile(type);
+			tiles[y].emplace_back(newTile);
 
-			// Track the Start and End points positions
-			if (type == TileType::Start) {
+			if (type == TileType::MultiVisit) {
+				this->remainingWalkableTiles += 2;
+			}
+			else if (type == TileType::Walkable) {
+				this->remainingWalkableTiles++;
+			}
+			else if (type == TileType::Start) {
 				this->startCoords = { static_cast<int>(x), static_cast<int>(y) };
-				// this->remainingWalkableTiles++;
 			}
 			else if (type == TileType::End) {
 				this->endCoords = { static_cast<int>(x), static_cast<int>(y) };
-				// this->remainingWalkableTiles++;
 			}
-			if (type == TileType::Walkable) {
-				this->remainingWalkableTiles++;
-			}
-
 		}
+	}
+}
+
+
+Grid::~Grid() {
+	for (auto& row : tiles) {
+		for (Tile* tile : row) {
+			delete tile;
+		}
+		row.clear();
 	}
 }
 
@@ -76,17 +98,17 @@ bool Grid::isValidMove(const Coords& target) const {
 		return false;
 	}
 
-	const Tile& targetTile = tiles[target.y][target.x];
+	const Tile* targetTile = tiles[target.y][target.x];
 
 	// 2
-	if (!targetTile.isWalkable()) {
+	if (!targetTile->isWalkable()) {
 		std::cerr << "Invalid Move: Fell into the void or hit an already visited Tile." << std::endl;
 		return false;
 	}
 
 	// 3
 	// Can't revisit Start tile, unless this becomes an intended gameplay mechanic?
-	if (targetTile.getType() == TileType::Start) {
+	if (targetTile->getType() == TileType::Start) {
 		std::cerr << "Invalid Move: Can't revisit the Start Tile." << std::endl;
 		return false;
 	}
@@ -100,10 +122,11 @@ bool Grid::isValidMove(const Coords& target) const {
 * @param previous The co-ordinate of the previously occupied tile
 */
 void Grid::updateLevelState(const Coords& previous) {
-	if (this->tiles[previous.y][previous.x].getType() != TileType::Start) {
-		this->tiles[previous.y][previous.x].setType(TileType::Visited);
+	Tile* previousTile = this->tiles[previous.y][previous.x];
+	if (previousTile->updateStateOnExit()) {
 		this->decrementWalkableTiles();
 	}
+
 }
 
 
@@ -111,7 +134,16 @@ void Grid::updateLevelState(const Coords& previous) {
 * @brief Resets the Grid to its initial state for a level restart
 */
 void Grid::reset() {
+	for (auto& row : tiles) {
+		for (Tile* tile : row) {
+			delete tile;
+		}
+		row.clear();
+	}
+
 	this->tiles.clear();
+	this->remainingWalkableTiles = 0;
+
 	for (size_t y = 0; y < this->height; ++y) {
 		// Start new row
 		tiles.emplace_back();
@@ -119,7 +151,15 @@ void Grid::reset() {
 		for (size_t x = 0; x < this->width; ++x) {
 			TileType type = initialLevelState[y][x];
 
-			tiles[y].emplace_back(type);
+			Tile* newTile = createNewTile(type);
+			tiles[y].emplace_back(newTile);
+
+			if (type == TileType::MultiVisit) {
+				this->remainingWalkableTiles += 2;
+			}
+			else if (type == TileType::Walkable) {
+				this->remainingWalkableTiles++;
+			}
 		}
 	}
 }
@@ -133,6 +173,7 @@ void Grid::reset() {
 * @return True if the win conditions have been reached, else guarding falses
 */
 bool Grid::checkWinConditions(const Coords& currentPosition) {
+	std::cout << this->getRemainingWalkableTiles() << std::endl;
 	if (currentPosition == this->endCoords && this->getRemainingWalkableTiles() == 0) {
 		return true; // Win
 	}
@@ -146,6 +187,7 @@ bool Grid::checkWinConditions(const Coords& currentPosition) {
 */
 void Grid::display(const Coords& playerPostion) const {
 	std::cout << "\n";
+
 	for (size_t y = 0; y < this->height; ++y) {
 		for (size_t x = 0; x < this->width; ++x) {
 			char cell;
@@ -155,7 +197,7 @@ void Grid::display(const Coords& playerPostion) const {
 				continue;
 			}
 
-			cell = Tile::tileTypeToChar(tiles[y][x].getType());
+			cell = tiles[y][x]->tileTypeToChar(tiles[y][x]->getType());
 			std::cout << cell << " ";
 		}
 		std::cout << "\n";

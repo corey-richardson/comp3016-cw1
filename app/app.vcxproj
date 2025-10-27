@@ -127,13 +127,18 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="MultiVisitTile.cpp" />
     <ClCompile Include="PlayerCursor.cpp" />
+    <ClCompile Include="StandardTile.cpp" />
+    <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="LevelLoader.h" />
+    <ClInclude Include="MultiVisitTile.h" />
     <ClInclude Include="PlayerCursor.h" />
+    <ClInclude Include="StandardTile.h" />
     <ClInclude Include="Tile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

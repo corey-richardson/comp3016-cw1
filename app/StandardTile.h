@@ -11,7 +11,7 @@ public:
 	using Tile::tileTypeToChar;
 
 	bool isWalkable() const override;
-	void updateStateOnExit() override;
+	bool updateStateOnExit() override;
 };
 
 #endif
