@@ -37,6 +37,8 @@ TileType LevelLoader::charToTileType(char c) {
 * 3. File line have inconsistent lengths
 */
 std::vector<std::vector<TileType>> LevelLoader::loadLevel(const std::string& filename) {
+	// std::cout << "\nLoading: " << filename << std::endl;
+
 	std::ifstream file("levels/" + filename); // ios::in
 
 	if (!file.is_open()) {

@@ -7,12 +7,28 @@
 #include "Game.h"
 #include "LevelLoader.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-	const std::string levelManifestFilename = "levels/level-manifest.txt";
+	const std::string LEVEL_MANIFEST_FILENAME = "levels/level-manifest.txt";
+	const std::string TEST_MANIFEST_FILENAME = "levels/test-manifest.txt";
+	std::string manifest = LEVEL_MANIFEST_FILENAME;
+
+	/* Use a VS Post-Build Event to copy levels over to Debug/Release build dir 
+	Project Properties > Build Events > Post-Build Events 
+	xcopy "$(ProjectDir)levels" "$(TargetDir)levels\" /s /i /y
+
+	Then run from CLI: ./app --test
+	*/
+	if (argc > 1) {
+		if (std::string(argv[1]) == "--test") {
+			manifest = TEST_MANIFEST_FILENAME;
+			std::cout << "Running in Test Mode." << std::endl;
+			std::cout << "Loading files from: " << TEST_MANIFEST_FILENAME << std::endl;
+		}
+	}
 
 	try {
-		Game game(levelManifestFilename);
+		Game game(manifest);
 		game.run();
 	}
 	catch (const LevelLoadException& e) {

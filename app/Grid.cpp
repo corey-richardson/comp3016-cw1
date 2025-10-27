@@ -1,7 +1,7 @@
 #include "Grid.h"
 #include "StandardTile.h"
 #include "MultiVisitTile.h"
-
+#include "LevelLoader.h"
 
 /**
 * @brief A factory method to create a new Tile instance based on the given type
@@ -46,6 +46,7 @@ Tile* Grid::createNewTile(TileType type) {
 * - `remainingWalkableTiles` to track how many walkable visits remain for the win condition
 * 
 * @param levelData A 2D vector of TileType values representing a level
+* @throw LevelLoadException on empty LevelData or missing Start or End Coords
 */
 Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelState(levelData) {
 	/* NOTE: Constructor needs to populate the tiles vector, dynamic memory 
@@ -53,8 +54,7 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 	Then, record game goal points and walkable tiles */
 
 	if (levelData.empty() || levelData[0].empty()) {
-		std::cerr << "Level data is empty or invalid!" << std::endl;
-		return; // throw
+		throw LevelLoadException("Level data is empty or invalid!");
 	}
 
 	// TODO: conversion from 'size_t' to 'int', possible loss of data
@@ -89,8 +89,7 @@ Grid::Grid(const std::vector<std::vector<TileType>>& levelData) : initialLevelSt
 
 	// Validate level, check Start and End Coords set
 	if (this->getStartCoords().x == 1 || this->getEndCoords().x == -1) {
-		std::cerr << "Level failed to initialise: Missing either Start or End tile (Sentinel value check)." << std::endl;
-		return;
+		throw LevelLoadException("Level failed to initialise: Missing either Start or End tile (Sentinel value check).");
 	}
 }
 

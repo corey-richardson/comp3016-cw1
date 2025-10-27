@@ -3,3 +3,5 @@ level-2.txt
 level-3.txt
 level-4.txt
 level-5.txt
+level-6.txt
+level-7.txt
