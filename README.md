@@ -293,6 +293,31 @@ As the Game Loop is encapsulated within `Game::run()`, the game logic is decoupl
 
 ## Game Mechanics and How They Are Coded
 
+### Level Loading
+
+Level Loading is handled by the `LevelLoader` class. This class is implemented as a static utility class with a deleted private constructor to block instantiation.
+
+```cpp
+class LevelLoader {
+private:
+	LevelLoader() = delete;
+	static TileType charToTileType(char c);
+public:
+	static std::vector<std::vector<TileType>> loadLevel(const std::string& filename);
+};
+```
+
+The `LevelLoader::loadLevel` method opens the level file before iterating over each character present in the file and translates the data into a level blueprint (`std::vector<std::vector<TileType>>`).
+
+A custom `LevelLoadException` was defined alongside the `LevelLoader` class in `LevelLoader.h`, inheriting from `std::runtime_error`. 
+
+This exception is thrown if:
+1. The file cannot be opened
+2. File contains invalid characters that can't be parsed
+3. File line have inconsistent lengths
+
+The design of this class enforces the [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP), seperating the concern of File I/O and level parsing out of the `Game` classes area of concern of managing the flow and state of the game.
+
 ## UML Design Diagrams
 
 ## Sample Screens
