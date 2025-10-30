@@ -29,7 +29,41 @@ Immersive Game Technologies
 
 ## Gameplay Description
 
+"Puzzle Path Game" is a tile based puzzle game where the player must use logic and reasoning skills to navigate a grid, visiting every walkable tile on their way.
+
+The objective of the same is to move from the Start `S` tile to the End `E` tile, visiting every walkable tile on their route. If the user reaches the End `E` tile without first visiting every walkable tile, the level is considered to be in an unsolvable condition and the level is reset to it's initial state.
+
+The game is inspired by B-Cubed on CoolMathsGames, an educational games platform. The game develops skills in younger players including logic, spatial reasoning and forward planning. The design of the game encourages players to reason through sequences and visualise the route in their minds before making a move.
+
+The game features two main walkable tile types: Walkable `#` and Multi-Visit `2`, `1`. Whereas Walkable tiles may only be visited once, Multi-Visit tiles mist be visited multiple times before they are considered 'visited' by the game engine. This adds a layer of complexity and depth to the planning, where a tile will need to be revisited again later in the solution sequence. This complexity is introduced gradually in the Standard mode of the game, forcing the player to problem-solve and reason to understand the new mechanism.
+
+There are two modes for gameplay, selectable in the Main Menu screen of the game.
+
+Standard:
+- Levels are played in a set sequential order as listed in the [level manifest file](./app/levels/level-manifest.txt), introducing complexity gradually.
+
+Endless Random Mode:
+- Levels are randomly shuffled each play-through cycle allowing for infinite replayability, with a running counter to track the progres of total levels completed across cycles.
+
 ## Dependencies Used
+
+The project uses standard C++ libraries:
+- `iostream`, `string`, `vector` Core utility.
+- `fstream` File I/O for runtime level loading handling.
+- `random`, `chrono`, `algorithm` Used by the `RandomGame` class to `std::shuffle` the level sequences, a time-based seed is used for randomisation.
+- `memory` Used by `std::unique_ptr` to handle resource management for polymorphic `Game` and `RandomGame` objects, and dynamic safe memory allocation for `Grid` and `PlayerCursor` objects.
+
+The game also depends on level files being present in `.txt` format in a `levels/` directory alongside the program's executable file at runtime. 
+
+These files are copied using a Post-Build Event from `./app/levels/` to the output directory at build-time: `Debug/` or `Release/`.
+
+`app` > `Properties` > `Build Events` > `Post-Build Event` > `Command Line`:
+
+```sh
+xcopy "$(ProjectDir)levels" "$(TargetDir)levels\" /s /i /y
+```
+
+> This command may be required to be changed if building the project on a non-Windows machine.
 
 ## Use of AI Description
 
