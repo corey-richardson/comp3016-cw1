@@ -316,7 +316,11 @@ This exception is thrown if:
 2. File contains invalid characters that can't be parsed
 3. File line have inconsistent lengths
 
+These exceptions get bubbled up to the `Game::loadNextLevel` method, which then attempts to skip the current level load and load the next level.
+
 The design of this class enforces the [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP), seperating the concern of File I/O and level parsing out of the `Game` classes area of concern of managing the flow and state of the game.
+
+<!-- TODO -->
 
 ## UML Design Diagrams
 
