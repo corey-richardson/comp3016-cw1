@@ -41,7 +41,6 @@ Direction Game::charToDirection(char inputChar) {
 * @throws LevelLoadException if the manifest file cannot be opened or is empty
 */
 void Game::loadLevelManifest(const std::string& levelManifestFilename) {
-	std::cout << "Standard!" << std::endl;
 	std::ifstream file(levelManifestFilename);
 
 	if (!file.is_open()) {
@@ -194,7 +193,7 @@ bool Game::handleInput() {
 	input = std::tolower(input);
 
 	if (input == 'q') {
-		std::cout << "Quitting game..." << std::endl;
+		std::cout << "Returning to menu..." << std::endl;
 		gameOver = true;
 		return false;
 	}
