@@ -20,7 +20,6 @@
 * @return A pointer to the allocated Tile object.
 */
 std::unique_ptr<Tile> Grid::createNewTile(TileType type) {
-	// TODO: Update to use a smart pointer; improves memory safety
 	// https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170
 	if (type == TileType::MultiVisit) {
 		return std::make_unique<MultiVisitTile>(type, 2);
