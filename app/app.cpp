@@ -49,11 +49,42 @@ void displayRules() {
 }
 
 
+/**
+* @brief Executes a game instance with error handling.
+* @param gameInstance Unique pointer handling polymorphic Game or RandomGame instance
+* @param manifest File path to the level manifest to be used.
+*/
+void runGameFlow(std::unique_ptr<Game> gameInstance, const std::string& manifest) {
+	if (!gameInstance) {
+		std::cerr << "Failed to create the game instance!" << std::endl;
+		return;
+	}
+
+	try {
+		gameInstance->run(manifest);
+	}
+	catch (const LevelLoadException& e) {
+		std::cerr << "A required game file could not be loaded!" << std::endl;
+		std::cerr << e.what() << std::endl;
+	}
+	catch (const std::runtime_error& e) {
+		std::cerr << "A runtime error caused an exception!" << std::endl;
+		std::cerr << e.what() << std::endl;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "An unknown error caused an exception!" << std::endl;
+		std::cerr << e.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Game crashed :(" << std::endl;
+	}
+}
+
+
 int main(int argc, char *argv[])
 {
 	const std::string LEVEL_MANIFEST_FILENAME = "levels/level-manifest.txt";
 	const std::string TEST_MANIFEST_FILENAME = "levels/test-manifest.txt";
-	std::string manifest = LEVEL_MANIFEST_FILENAME;
 
 	/* Use a VS Post-Build Event to copy levels over to Debug/Release build dir 
 	Project Properties > Build Events > Post-Build Events 
@@ -63,9 +94,11 @@ int main(int argc, char *argv[])
 	*/
 	if (argc > 1) {
 		if (std::string(argv[1]) == "--test") {
-			manifest = TEST_MANIFEST_FILENAME;
 			std::cout << "Running in Test Mode." << std::endl;
 			std::cout << "Loading files from: " << TEST_MANIFEST_FILENAME << std::endl;
+			std::unique_ptr<Game> game;
+			game = std::make_unique<Game>();
+			game->run(TEST_MANIFEST_FILENAME);
 		}
 	}
 
@@ -73,7 +106,8 @@ int main(int argc, char *argv[])
 	while (choice != '4') {
 		displayMenu();
 		
-		if (!(std::cin.get() >> choice)) { // .get() inky for first char
+		if (!(std::cin >> choice)) { // .get() only for first char
+			std::cout << choice << std::endl;
 			std::cout << "Invalid Input. Please enter a number (1-4).\n" << std::endl;
 			// https://stackoverflow.com/questions/257091/how-do-i-flush-the-cin-buffer
 			std::cin.clear();
@@ -82,16 +116,19 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
+		// Only read first character of the input stream
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
 		std::unique_ptr<Game> game = nullptr;
 
 		switch (choice) {
 			case '1': // Standard Game
 				game = std::make_unique<Game>();
-				game->run(manifest);
+				game->run(LEVEL_MANIFEST_FILENAME);
 				break;
 			case '2': // Random Endless
 				game = std::make_unique<RandomGame>();
-				game->run(manifest);
+				game->run(LEVEL_MANIFEST_FILENAME);
 				break;
 			case '3': // Rules and Game Overview
 				displayRules();
@@ -107,30 +144,6 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
-
-	//try {
-	//	Game game;
-	//	game.run(manifest);
-	//}
-	//catch (const LevelLoadException& e) {
-	//	std::cerr << "A required game file could not be loaded!" << std::endl;
-	//	std::cerr << e.what() << std::endl;
-	//	return 2;
-	//}
-	//catch (const std::runtime_error& e) {
-	//	std::cerr << "A runtime error caused an exception!" << std::endl;
-	//	std::cerr << e.what() << std::endl;
-	//	return 3;
-	//}
-	//catch (const std::exception& e) {
-	//	std::cerr << "An unknown error caused an exception!" << std::endl;
-	//	std::cerr << e.what() << std::endl;
-	//	return 4;
-	//}
-	//catch (...) {
-	//	std::cerr << "Game crashed :(" << std::endl;
-	//	return 1;
-	//}
 
 	return 0;
 }
