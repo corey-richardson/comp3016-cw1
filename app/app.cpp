@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "Game.h"
 #include "RandomGame.h"
@@ -28,29 +29,62 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	try {
-		Game game;
-		game.run(manifest);
+	int choice = -1;
+	while (choice != -4) {
+		// Display menu
+		
+		if (!(std::cin >> choice)) {
+			std::cout << "Invalid Input. Please enter a number (1-4).\n" << std::endl;
+			continue;
+		}
+
+		std::unique_ptr<Game> game = nullptr;
+
+		switch (choice) {
+			case 1: // Standard Game
+				game = std::make_unique<Game>();
+				game->run(manifest);
+				break;
+			case 2: // Random Endless
+				game = std::make_unique<RandomGame>();
+				game->run(manifest);
+				break;
+			case 3: // Rules and Game Overview
+				// TODO
+				break;
+			case 4: // Quit
+				std::cout << "\nQuitting...\n" << std::endl;
+				break;
+
+			default:
+				std::cout << "Invalid Input. Please enter a number (1-4).\n" << std::endl;
+				break;
+		}
 	}
-	catch (const LevelLoadException& e) {
-		std::cerr << "A required game file could not be loaded!" << std::endl;
-		std::cerr << e.what() << std::endl;
-		return 2;
-	}
-	catch (const std::runtime_error& e) {
-		std::cerr << "A runtime error caused an exception!" << std::endl;
-		std::cerr << e.what() << std::endl;
-		return 3;
-	}
-	catch (const std::exception& e) {
-		std::cerr << "An unknown error caused an exception!" << std::endl;
-		std::cerr << e.what() << std::endl;
-		return 4;
-	}
-	catch (...) {
-		std::cerr << "Game crashed :(" << std::endl;
-		return 1;
-	}
+
+	//try {
+	//	Game game;
+	//	game.run(manifest);
+	//}
+	//catch (const LevelLoadException& e) {
+	//	std::cerr << "A required game file could not be loaded!" << std::endl;
+	//	std::cerr << e.what() << std::endl;
+	//	return 2;
+	//}
+	//catch (const std::runtime_error& e) {
+	//	std::cerr << "A runtime error caused an exception!" << std::endl;
+	//	std::cerr << e.what() << std::endl;
+	//	return 3;
+	//}
+	//catch (const std::exception& e) {
+	//	std::cerr << "An unknown error caused an exception!" << std::endl;
+	//	std::cerr << e.what() << std::endl;
+	//	return 4;
+	//}
+	//catch (...) {
+	//	std::cerr << "Game crashed :(" << std::endl;
+	//	return 1;
+	//}
 
 	return 0;
 }
