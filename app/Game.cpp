@@ -258,13 +258,7 @@ void Game::checkGameState() {
 * Runs until game over or grid fails to load
 */
 void Game::run(const std::string& levelManifestFilename) {
-	/* TODO
-	"Menu" screen detailing input options
-	*/
 
-	/* TODO
-	Endless random mode?
-	*/
 	this->initialise(levelManifestFilename);
 
 	while (!gameOver) {
