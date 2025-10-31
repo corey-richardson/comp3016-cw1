@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			std::cout << "Loading files from: " << TEST_MANIFEST_FILENAME << std::endl;
 			std::unique_ptr<Game> game;
 			game = std::make_unique<Game>();
-			game->run(TEST_MANIFEST_FILENAME);
+			runGameFlow(std::move(game), TEST_MANIFEST_FILENAME);
 		}
 	}
 
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 	while (choice != '4') {
 		displayMenu();
 		
-		if (!(std::cin >> choice)) { // .get() only for first char
+		if (!(std::cin >> choice)) {
 			std::cout << choice << std::endl;
 			std::cout << "Invalid Input. Please enter a number (1-4).\n" << std::endl;
 			// https://stackoverflow.com/questions/257091/how-do-i-flush-the-cin-buffer
@@ -124,11 +124,12 @@ int main(int argc, char *argv[])
 		switch (choice) {
 			case '1': // Standard Game
 				game = std::make_unique<Game>();
-				game->run(LEVEL_MANIFEST_FILENAME);
+				// std::move transfers ownership of the pointer to runGameFlow
+				runGameFlow(std::move(game), LEVEL_MANIFEST_FILENAME);
 				break;
 			case '2': // Random Endless
 				game = std::make_unique<RandomGame>();
-				game->run(LEVEL_MANIFEST_FILENAME);
+				runGameFlow(std::move(game), LEVEL_MANIFEST_FILENAME);
 				break;
 			case '3': // Rules and Game Overview
 				displayRules();
