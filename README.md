@@ -320,16 +320,624 @@ These exceptions get bubbled up to the `Game::loadNextLevel` method, which then 
 
 The design of this class enforces the [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single-responsibility_principle) (SRP), seperating the concern of File I/O and level parsing out of the `Game` classes area of concern of managing the flow and state of the game.
 
-<!-- TODO -->
+### Level Randomisation
+
+The `RandomGame` class extends the functionality of the `Game` base class to implement the Random Endless Mode of gameplay by overriding the `loadLevelManifest()` and `loadNextLevel()` methods and injecting shuffling logic using `std::shuffle` and `std::default_random_engine`. 
+
+```cpp
+class RandomGame : public Game {
+public:
+	RandomGame();
+	void loadLevelManifest(const std::string& levelManifestFilename) override;
+	void loadNextLevel() override;
+	void onLevelSolved() override;
+private:
+	std::default_random_engine rng;
+	unsigned int levelsCompleted = 0;
+};
+```
+
+Adhering to the Don't Repeat Yourself (DRY) principle, the implementation `RandomGame` reuses the existing functionality of `Game::loadLevelManifest()` and `Game::loadNextLevel()` in it's own overridden implementations of these methods. Instead of duplicating their logic, it extends the base behaviour with its required specialised functionality.
+- `RandomGame::loadLevelManifest()` first uses the base class method to load the level list, before extending the functionality by shuffling the `vector` and randomising the level order.
+- `RandomGame::loadNextLevel()` reuses the base class method to handle file loading and cleanup, whilst adding the reshuffling and endless-continuing behaviour when all levels in this cycle have been completed.
+
+```cpp
+/**
+* @brief Overridden method to load the level manifest (using base) before shuffling the order
+* @param levelManifestFilename The path to the Level Manifest file
+*/
+void RandomGame::loadLevelManifest(const std::string& levelManifestFilename) {
+	Game::loadLevelManifest(levelManifestFilename);
+
+	if (!this->levelFiles.empty()) {
+		// https://stackoverflow.com/questions/6926433/how-to-shuffle-a-stdvector Mehmet 
+		std::shuffle(levelFiles.begin(), levelFiles.end(), this->rng);
+	}
+}
+
+
+/**
+* @brief Overridden method to load levels in an endless random cycle
+* 
+* Checks if the end of the manifest has been reached. If so, it resets the level index to 0
+* and then reshuffles the level file order. 
+* 
+* Base method Game::loadNextLevel handles cleanup and file loading
+*/
+void RandomGame::loadNextLevel() {
+
+	if (this->currentLevelIndex >= this->levelFiles.size()) {
+		std::cout << "\nAll levels completed! Reshuffling " << this->levelFiles.size() << " levels...\n" << std::endl;
+
+		this->currentLevelIndex = 0;
+		std::shuffle(levelFiles.begin(), levelFiles.end(), this->rng);
+	}
+
+	Game::loadNextLevel();
+}
+```
 
 ## UML Design Diagrams
 
 ## Sample Screens
 
+<details>
+<summary>Main Menu</summary>
+```
+===================================
+          PUZZLE PATH GAME
+===================================
+1. Start Standard Game
+2. Start Endless Random Game
+3. Game and Rules Overview
+4. Quit
+-----------------------------------
+Enter your choice (1-4):
+```
+
+</details>
+
+<details>
+<summary>Standard Game</summary>
+
+```
+Enter your choice (1-4): 1
+Loaded Level 1
+Visit all 8 tiles to pass the level!
+
+P # # # # # # E
+
+Move (WASD):
+ddddddd
+
+S P # # # # # E
+
+Move (WASD):
+S * P # # # # E
+
+Move (WASD):
+S * * P # # # E
+
+Move (WASD):
+S * * * P # # E
+
+Move (WASD):
+S * * * * P # E
+
+Move (WASD):
+S * * * * * P E
+
+Move (WASD):
+Level 1 solved!
+
+Loaded Level 2
+Visit all 8 tiles to pass the level!
+
+  P # #
+  E   #
+  # # #
+
+Move (WASD):
+d
+
+  S P #
+  E   #
+  # # #
+
+Move (WASD): d
+
+  S * P
+  E   #
+  # # #
+
+Move (WASD): s
+
+  S * *
+  E   P
+  # # #
+
+Move (WASD):
+s
+
+  S * *
+  E   *
+  # # P
+
+Move (WASD): a
+
+  S * *
+  E   *
+  # P *
+
+Move (WASD):
+a
+
+  S * *
+  E   *
+  P * *
+
+Move (WASD):
+w
+
+Level 2 solved!
+```
+
+</details>
+
+> Note that player input can be provided either one character at a time or as a stream of multiple characters. <br>
+> This behaviour was not originally the intended behaviour, which was to only allow single character inputs. However, playtesting showed that allowing multiple movement commands to be enterred in a single input improved the convenience and flow of the gameplay, enhancing Quality Of Life (QOL).
+> This feature could be reverted to single-character input by flushing any remaining characters from the input stream buffer, as done in the Main Menu (`app.cpp:119`): <br>
+> ```cpp
+> std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+> ```
+
+<details>
+<summary>Example of Failure and Level State Reset (Walked into the void)</summary>
+
+```
+Loaded Level 1
+Visit all 8 tiles to pass the level!
+
+P # # # # # # E
+
+Move (WASD):
+dddds
+
+S P # # # # # E
+
+Move (WASD):
+S * P # # # # E
+
+Move (WASD):
+S * * P # # # E
+
+Move (WASD):
+S * * * P # # E
+
+Move (WASD): Invalid Move: Out of bounds.
+
+P # # # # # # E
+
+Move (WASD):
+```
+
+</details>
+
+<details>
+<summary>Example of Failure and Level State Reset (Revisited an already Visited Tile)</summary>
+
+```
+Loaded Level 1
+Visit all 8 tiles to pass the level!
+
+P # # # # # # E
+
+Move (WASD): dddd
+
+S P # # # # # E
+
+Move (WASD):
+S * P # # # # E
+
+Move (WASD):
+S * * P # # # E
+
+Move (WASD):
+S * * * P # # E
+
+Move (WASD): a
+Invalid Move: Fell into the void or hit an already visited Tile.
+
+P # # # # # # E
+
+Move (WASD):
+```
+
+</details>
+
+<details>
+<summary>Example of Failure and Level State Reset (Reached End without visiting all Walkable Tiles)</summary>
+
+```
+Loaded Level 2
+Visit all 8 tiles to pass the level!
+
+  P # #
+  E   #
+  # # #
+
+Move (WASD): s
+Unsolvable state reached! Resetting...
+
+  P # #
+  E   #
+  # # #
+
+Move (WASD):
+```
+
+</details>
+
+<details>
+<summary>Example of MultiVisitTile</summary>
+
+```
+Loaded Level 1
+Visit all 12 tiles to pass the level!
+
+  # # #
+  #   #
+P 2 # #
+  #
+  E
+
+Move (WASD): d
+
+  # # #
+  #   #
+S P # #
+  #
+  E
+
+Move (WASD): d
+
+  # # #
+  #   #
+S 1 P #
+  #
+  E
+
+Move (WASD): d
+
+  # # #
+  #   #
+S 1 * P
+  #
+  E
+
+Move (WASD): w
+
+  # # #
+  #   P
+S 1 * *
+  #
+  E
+
+Move (WASD): w
+
+  # # P
+  #   *
+S 1 * *
+  #
+  E
+
+Move (WASD): a
+
+  # P *
+  #   *
+S 1 * *
+  #
+  E
+
+Move (WASD): a
+
+  P * *
+  #   *
+S 1 * *
+  #
+  E
+
+Move (WASD): s
+
+  * * *
+  P   *
+S 1 * *
+  #
+  E
+
+Move (WASD): s
+
+  * * *
+  *   *
+S P * *
+  #
+  E
+
+Move (WASD): s
+
+  * * *
+  *   *
+S * * *
+  P
+  E
+
+Move (WASD): s
+
+Level 1 solved!
+```
+
+</details>
+
+<details>
+<summary>Endless Random Game</summary>
+
+```
+===================================
+          PUZZLE PATH GAME
+===================================
+1. Start Standard Game
+2. Start Endless Random Game
+3. Game and Rules Overview
+4. Quit
+-----------------------------------
+Enter your choice (1-4): 2
+Loaded Level 1
+Visit all 21 tiles to pass the level!
+
+# # P
+#   # # #
+# # #   #
+# # # # #
+#   E
+# # #
+
+Move (WASD): aassddwddssaaaassddw
+
+< Lines Ommitted >
+
+Level 1 solved!
+(Total Completed: 1)
+
+Loaded Level 2
+Visit all 8 tiles to pass the level!
+
+P # # # # # # E
+
+Move (WASD):
+ddddddd
+
+< Lines Ommitted >
+
+Level 2 solved!
+(Total Completed: 2)
+
+Loaded Level 3
+Visit all 8 tiles to pass the level!
+
+  P # #
+  E   #
+  # # #
+
+Move (WASD):
+ddssaaw
+
+< Lines Ommitted >
+
+Level 3 solved!
+(Total Completed: 3)
+
+
+All levels completed! Reshuffling 3 levels...
+
+Loaded Level 1
+Visit all 8 tiles to pass the level!
+
+P # # # # # # E
+
+Move (WASD): dddddd
+
+< Lines Ommitted >
+
+Level 1 solved!
+(Total Completed: 4)
+
+Loaded Level 2
+Visit all 21 tiles to pass the level!
+
+# # P
+#   # # #
+# # #   #
+# # # # #
+#   E
+# # #
+
+Move (WASD): aassddwddssaaaassddw
+
+< Lines Ommitted >
+
+Level 2 solved!
+(Total Completed: 5)
+
+Loaded Level 3
+Visit all 8 tiles to pass the level!
+
+  P # #
+  E   #
+  # # #
+
+Move (WASD): q
+Returning to menu...
+Game Over!
+
+===================================
+          PUZZLE PATH GAME
+===================================
+1. Start Standard Game
+2. Start Endless Random Game
+3. Game and Rules Overview
+4. Quit
+-----------------------------------
+Enter your choice (1-4):
+```
+
+</details>
+
+<details>
+<summary>Game and Rules Overview</summary>
+
+```
+===================================
+          PUZZLE PATH GAME
+===================================
+1. Start Standard Game
+2. Start Endless Random Game
+3. Game and Rules Overview
+4. Quit
+-----------------------------------
+Enter your choice (1-4): 3
+
+===================================
+          GAME OVERVIEW
+===================================
+OBJECTIVE: Visit every required tile on the grid to solve the level.
+
+CONTROLS:
+ - W/A/S/D: Move Up, Left, Down, Right.
+ - R: Reset the current level.
+ - Q: Quit the game and return to the menu.
+
+TILE GUIDE:
+ - S: Start Position
+ - E: End Position (must be the last tile visited)
+ - .: Void Tiles (Non-walkable)
+ - #: Univisited Walkable Tile
+ - *: Visited Walkable Tile (Standard, or final visit for Multi-Visit)
+
+MULTI-VISIT TILE GUIDE:
+These tiles must be visited multiple times before they count as 'visited'.
+ - 2: Requires 2 more visits.
+ - 1: Requires 1 more visit.
+
+GAME MODES:
+ - Standard: Plays levels in manifest order.
+ - Endless Random: Shuffles levels and cycles them infinitely.
+===================================
+
+
+===================================
+          PUZZLE PATH GAME
+===================================
+1. Start Standard Game
+2. Start Endless Random Game
+3. Game and Rules Overview
+4. Quit
+-----------------------------------
+Enter your choice (1-4):
+```
+
+</details>
+
+<details>
+<summary>Quit (from Menu)</summary>
+
+```
+===================================
+          PUZZLE PATH GAME
+===================================
+1. Start Standard Game
+2. Start Endless Random Game
+3. Game and Rules Overview
+4. Quit
+-----------------------------------
+Enter your choice (1-4): q
+
+Quitting...
+```
+
+</details>
+
 ## Exception Handling and Test Cases
 
+### Exception Handling
+
+Exception Handling is centralised in the `runGameFlow` function in `app.cpp`. This means that when a usually fatal error occurs, the error does not crash the game but instead reports the error and gracefully handles it by returning to the Main Menu.
+
+A custom `LevelLoadException` is defined in `LevelLoader.h`. The custom exception allows for errors raised during File I/O operations to be more description and identifiable, making debugging the application easier; improved maintainability. These `LevelLoadException`s are thrown by `LevelLoader:`loadLevel` when:
+1. The file cannot be opened
+2. File contains invalid characters that can't be parsed
+3. File line have inconsistent lengths
+
+The `LevelLoadException`s get caught in `Game::loadNextLevel()` where it is handled by:
+1. Reporting the error with `std::cerr`
+2. Increments the `currentLevelIndex` member variable
+3. Recursively calls `loadNextLevel()` attempting to load the next level in the sequence
+
+```cpp
+/**
+* @brief Loads the next level from the level manifest
+* Clears any existing level resources from the memory
+* @throws LevelLoadException if a level file fails to load. Attempts to skip and load the next level instead.
+*/
+void Game::loadNextLevel() {
+	this->cleanupLevel();
+
+	if (this->currentLevelIndex >= this->levelFiles.size()) {
+		// ...
+		return;
+	}
+
+	const std::string& filename = levelFiles[this->currentLevelIndex];
+
+	try {
+		// ...
+	}
+	catch (const LevelLoadException& e) {
+		std::cerr << "Error Loading Level " << filename << ": " << e.what() << std::endl;
+
+		currentLevelIndex++;
+		loadNextLevel(); // try to load the next level and hope it aint broke
+	}
+}
+```
+> Current Limitation: What if NO levels can be loaded from the level manifest whilst in the Endless mode? Does it just infinitely attempt to load levels forever? Hmm...
+
+### Test Case Support
+
+The `main` function allows for an optional command line argument to be passed in to load a test manifest file, which instead loads levels from the [`levels/tests/`](./app/levels/tests/) directory.
+
+Test File | Purpose of Test
+:---: | ---
+`tests/test-missing-start.txt` | Tests handling of a missing `TileType::Start` from the level blueprint. Validation of Start and End Coords being set is carried out in `Grid::Grid`. Expected behaviour is for the game to skip this file and attempt to load the next file in the level manifest.
+`tests/test-missing-end.txt` | Tests handling of a missing `TileType::End` from the level blueprint. Validation of Start and End Coords being set is carried out in `Grid::Grid`. Expected behaviour is for the game to skip this file and attempt to load the next file in the level manifest.
+`tests/test-empty.txt` | Tests handling of an empty level data file by `LevelLoader::loadLevel`. Expected behaviour is for the game to skip this file and attempt to load the next file in the level manifest.
+`tests/test-invalid-character.txt` | This file contains a `!` which causes the `charToTileType` method to return a `TileType::Invalid`. If this `TileType` is encountered, the expected behaviour is to skip this file and attempt to load the next file in the level manifest.
+`tests/test-shape-error.txt` | Handles the case where the loaded level data is of a non-rectangular shape. The `LevelLoader::loadLevel` has an expected `lineLength`, which is set as the length of the first non-empty line of the level data file. If a line does not match this length then a `LevelLoadException` will be thrown. Expected behaviour is for the game to skip this file and attempt to load the next file in the level manifest.Note that any empty space should be defined in the level data file as a `TileType::Void` by using the `*` character.
+`tests/test-doesnt-exist.txt` | Handles the case where a file listed in the level manifest file cannot be found or doesn't exist. Expected behaviour is for the game to skip this file and attempt to load the next file in the level manifest.
+`tests/test-skips-to-working.txt` | Verifies that the game continues to load and run valid level data files after encountering invalid level data files earlier in the sequence.
+`tests/test-leading-newline.txt` | Verifies that the `LevelLoader::loadLevel` method can handle and skip a leading new line before the content of the level data file.
+`tests/test-trailing-newline.txt` | Verifies that the `LevelLoader::loadLevel` method can handle and skip a trailing new line after the content of the level data file.
+
+> Note that after making any changes to the level or test manifest, or to any associated level data files, the project should be rebuilt to ensure that the changes made are copied and reflected into the `Release/levels/` or `Debug/levels/` directories. 
+
+To run the test cases, use the `--test` command-line argument when running the application. 
+
+> A `std::cout` output found at the start of the `LevelLoader::loadLevel` method can be uncommented to provide more detailed logging of which test file is currently being loaded:
+
+```sh
+./app --test
+```
+
 ```txt
-PS C:\Users\richa\Desktop\comp3016-cw1\app\x64\Debug> ./app --test
 Running in Test Mode.
 Loading files from: levels/test-manifest.txt
 
@@ -365,7 +973,7 @@ Move (WASD): d
 Level 7 solved!
 
 
-Loading: tests/test-trailing-newline.txt
+Loading: tests/test-leading-newline.txt
 Loaded Level 8
 Visit all 3 tiles to pass the level!
 
@@ -376,9 +984,55 @@ Move (WASD): dd
 S P E
 
 Move (WASD): Level 8 solved!
+
+
+Loading: tests/test-trailing-newline.txt
+Loaded Level 9
+Visit all 3 tiles to pass the level!
+
+P # E
+
+Move (WASD): dd
+
+S P E
+
+Move (WASD): Level 9 solved!
 ```
 
+### Potential Test Improvements
+
+The current test framework performs integration and validation testing by running levels sequentially; however it is a manual testing process. Introducing a unit testing framework would provide more granular testing in isolation from the program flow (decoupled), which could also be automated to test regression per commit or push through a workflow or hook.
+
+Since the project follows the SRP, implementing unit tests would be largely easy. Components are already designed to have loose coupling meaning that the "units" are already isolated and easy to test independently.
+
+> Unfortunately, not enough time to implement this before the coursework deadline due to the [AWS Cloud Foundations Workshop](https://wakatime.com/@coreyrichardson/projects/cmassaomta?start=2025-10-27&end=2025-10-31) `:D`, possible future enhancement?
+>
+> https://github.com/corey-richardson/learning/tree/main/cpp/GoogleTest [Private]
+
 ## Further Details
+
+Nothing to add.
+
+## Known Bugs
+
+1. Unknown behaviour if *no* levels from the level manifest can be successfully loaded whilst running in Endless Random Mode; the current implementation may attempt to load levels infinitely causing an infinite loop, and possible memory problems as `loadNextLevel` is recursively called with no terminating from within itself but cleanup never completes.
+
+> Add a `maxLoadAttempts` counter to provide a base case for the method to close.
+
+2. `Grid::checkWinConditions` has no way of knowing if there are excess characters in the movement input stream. The following shows a case where the final move should push the `PlayerCursor` out of bounds *after* reaching a passing End state (3 moves but only 2 Tiles between current position and End goal position):
+
+```
+Visit all 3 tiles to pass the level!
+
+P # E
+
+Move (WASD): ddd // Correct solution would be 'dd'
+
+S P E
+
+Move (WASD):
+Level 7 solved!
+```
 
 ## Project Evaluation
 

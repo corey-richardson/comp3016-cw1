@@ -5,4 +5,5 @@ tests/test-invalid-character.txt
 tests/test-shape-error.txt
 tests/test-doesnt-exist.txt
 tests/test-skips-to-working.txt
+tests/test-leading-newline.txt
 tests/test-trailing-newline.txt
