@@ -25,7 +25,9 @@ protected:
 	void resetCurrentLevelState();
 
 	virtual void loadLevelManifest(const std::string& levelManifestFilename);
-	virtual void loadNextLevel();
+	virtual void loadNextLevel(unsigned int attempts = 0);
+
+	const unsigned int MAX_LOAD_ATTEMPTS = 10;
 
 	static Direction charToDirection(char inputChar);
 	bool handleInput();

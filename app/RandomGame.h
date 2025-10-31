@@ -14,7 +14,7 @@ class RandomGame : public Game {
 public:
 	RandomGame();
 	void loadLevelManifest(const std::string& levelManifestFilename) override;
-	void loadNextLevel() override;
+	void loadNextLevel(unsigned int attempts = 0) override;
 	void onLevelSolved() override;
 private:
 	std::default_random_engine rng;

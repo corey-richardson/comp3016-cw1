@@ -32,7 +32,7 @@ void RandomGame::loadLevelManifest(const std::string& levelManifestFilename) {
 * 
 * Base method Game::loadNextLevel handles cleanup and file loading
 */
-void RandomGame::loadNextLevel() {
+void RandomGame::loadNextLevel(unsigned int attempts) {
 
 	if (this->currentLevelIndex >= this->levelFiles.size()) {
 		std::cout << "\nAll levels completed! Reshuffling " << this->levelFiles.size() << " levels...\n" << std::endl;
@@ -41,7 +41,7 @@ void RandomGame::loadNextLevel() {
 		std::shuffle(levelFiles.begin(), levelFiles.end(), this->rng);
 	}
 
-	Game::loadNextLevel();
+	Game::loadNextLevel(attempts + 1);
 }
 
 

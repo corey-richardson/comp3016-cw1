@@ -329,7 +329,7 @@ class RandomGame : public Game {
 public:
 	RandomGame();
 	void loadLevelManifest(const std::string& levelManifestFilename) override;
-	void loadNextLevel() override;
+	void loadNextLevel(unsigned int attempts = 0) override;
 	void onLevelSolved() override;
 private:
 	std::default_random_engine rng;
@@ -364,7 +364,7 @@ void RandomGame::loadLevelManifest(const std::string& levelManifestFilename) {
 * 
 * Base method Game::loadNextLevel handles cleanup and file loading
 */
-void RandomGame::loadNextLevel() {
+void RandomGame::loadNextLevel(unsigned int attempts = 0) {
 
 	if (this->currentLevelIndex >= this->levelFiles.size()) {
 		std::cout << "\nAll levels completed! Reshuffling " << this->levelFiles.size() << " levels...\n" << std::endl;
@@ -373,7 +373,7 @@ void RandomGame::loadNextLevel() {
 		std::shuffle(levelFiles.begin(), levelFiles.end(), this->rng);
 	}
 
-	Game::loadNextLevel();
+	Game::loadNextLevel(attempts + 1);
 }
 ```
 
@@ -882,6 +882,8 @@ The `LevelLoadException`s get caught in `Game::loadNextLevel()` where it is hand
 2. Increments the `currentLevelIndex` member variable
 3. Recursively calls `loadNextLevel()` attempting to load the next level in the sequence
 
+After 10 consecutive failures (or as otherwise set by the `Game::MAX_LOAD_ATTEMPTS` member constant), the game returns to the Main Menu screen. (See [Known Bugs: \[1\]](#known-bugs))
+
 ```cpp
 /**
 * @brief Loads the next level from the level manifest
@@ -926,6 +928,7 @@ Test File | Purpose of Test
 `tests/test-skips-to-working.txt` | Verifies that the game continues to load and run valid level data files after encountering invalid level data files earlier in the sequence.
 `tests/test-leading-newline.txt` | Verifies that the `LevelLoader::loadLevel` method can handle and skip a leading new line before the content of the level data file.
 `tests/test-trailing-newline.txt` | Verifies that the `LevelLoader::loadLevel` method can handle and skip a trailing new line after the content of the level data file.
+11 * `tests/test-doesnt-exist.txt` | Tests that 10 consecutive level load failures cause a fatal failure which is gracefully handled by reporting the issue and returning to menu. Expected behaviour is for `Game::loadNextLevel` to make 10 attempts to load the next level in the level manifest sequence before handling the error on the 11th attempt. This verifies that there is a recursive safety mechanism to prevent an infitite loop by providing a base case to the recursive method. Manual validation is required here by counting the number of
 
 > Note that after making any changes to the level or test manifest, or to any associated level data files, the project should be rebuilt to ensure that the changes made are copied and reflected into the `Release/levels/` or `Debug/levels/` directories. 
 
@@ -937,27 +940,36 @@ To run the test cases, use the `--test` command-line argument when running the a
 ./app --test
 ```
 
+<details>
+<summary>Test Runthrough</summary>
+
 ```txt
 Running in Test Mode.
 Loading files from: levels/test-manifest.txt
 
 Loading: tests/test-missing-start.txt
 Error Loading Level tests/test-missing-start.txt: Level Load Error: Level failed to initialise: Missing either Start or End tile (Sentinel value check).
+Current attempt: 0
 
 Loading: tests/test-missing-end.txt
 Error Loading Level tests/test-missing-end.txt: Level Load Error: Level failed to initialise: Missing either Start or End tile (Sentinel value check).
+Current attempt: 1
 
 Loading: tests/test-empty.txt
 Error Loading Level tests/test-empty.txt: Level Load Error: File contained no level setup data.
+Current attempt: 2
 
 Loading: tests/test-invalid-character.txt
 Error Loading Level tests/test-invalid-character.txt: Level Load Error: Failed to parse character '! into a Tile.
+Current attempt: 3
 
 Loading: tests/test-shape-error.txt
 Error Loading Level tests/test-shape-error.txt: Level Load Error: Inconsistent line length in level file tests/test-shape-error.txt
+Current attempt: 4
 
 Loading: tests/test-doesnt-exist.txt
 Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 5
 
 Loading: tests/test-skips-to-working.txt
 Loaded Level 7
@@ -999,6 +1011,59 @@ S P E
 Move (WASD): Level 9 solved!
 ```
 
+</details>
+
+<details>
+<summary>Test Runthrough (Recursive Case Check)</summary>
+
+```
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 1
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 2
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 3
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 4
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 5
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 6
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 7
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 8
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 9
+
+Loading: tests/test-doesnt-exist.txt
+Error Loading Level tests/test-doesnt-exist.txt: Level Load Error: Failed to open level file: tests/test-doesnt-exist.txt
+Current attempt: 10
+
+
+Failed could load a valid level data file after 10 attempts.
+Game Over!
+```
+
+</details>
+
 ### Potential Test Improvements
 
 The current test framework performs integration and validation testing by running levels sequentially; however it is a manual testing process. Introducing a unit testing framework would provide more granular testing in isolation from the program flow (decoupled), which could also be automated to test regression per commit or push through a workflow or hook.
@@ -1015,9 +1080,65 @@ Nothing to add.
 
 ## Known Bugs
 
-1. Unknown behaviour if *no* levels from the level manifest can be successfully loaded whilst running in Endless Random Mode; the current implementation may attempt to load levels infinitely causing an infinite loop, and possible memory problems as `loadNextLevel` is recursively called with no terminating from within itself but cleanup never completes.
+1. **[RESOLVED]** Unknown behaviour if *no* levels from the level manifest can be successfully loaded whilst running in Endless Random Mode; the current implementation may attempt to load levels infinitely causing an infinite loop, and possible memory problems as `loadNextLevel` is recursively called with no terminating from within itself but cleanup never completes.
 
-> Add a `maxLoadAttempts` counter to provide a base case for the method to close.
+> Possible Solution: Add a `maxLoadAttempts` counter to provide a base case for the method to close.
+
+<details>
+<summary>Implemented Solution</summary>
+
+`Game` was updated to hold a `protected` member constant `MAX_LOAD_ATTEMPTS`:
+
+```cpp
+const unsigned int MAX_LOAD_ATTEMPTS = 10;
+```
+
+`Game::loadNextLevel` was updated to take an optional `attempts` counter:
+
+```cpp
+virtual void loadNextLevel(unsigned int attempts = 0);
+```
+
+A recursive base case was added to `Game::loadNextLevel`. If the number of `attempts` reaches the set number of `MAX_LOAD_ATTEMPTS`, the method ends the game and returns program control to the game loop.
+
+When a `LevelLoadException` is caught, the method increments the attempt counter during its recursive call. The failure count resets only on a successful level load (when it is called from `Game::checkGameState` without the optional `attempts` parameter - which defaults to `0` - when a level is successfully solved).
+
+```cpp
+/**
+* @brief Loads the next level from the level manifest
+* Clears any existing level resources from the memory
+* @throws LevelLoadException if a level file fails to load. Attempts to skip and load the next level instead.
+*/
+void Game::loadNextLevel(unsigned int attempts) {
+	this->cleanupLevel();
+
+	if (attempts >= this->MAX_LOAD_ATTEMPTS) {
+		std::cerr << "\n\nFailed could load a valid level data file after " << attempts << " attempts." << std::endl;
+		this->gameOver = true;
+		return;
+	}
+
+	if (this->currentLevelIndex >= this->levelFiles.size()) {
+		// ...
+		return;
+	}
+
+	const std::string& filename = levelFiles[this->currentLevelIndex];
+
+	try {
+		// ...
+	}
+	catch (const LevelLoadException& e) {
+		std::cerr << "Error Loading Level " << filename << ": " << e.what() << std::endl;
+		std::cerr << "Current attempt: " << attempts + 1 << std::endl;
+
+		currentLevelIndex++;
+		loadNextLevel(attempts + 1); // try to load the next level and hope it aint broke
+	}
+}
+```
+
+</details>
 
 2. `Grid::checkWinConditions` has no way of knowing if there are excess characters in the movement input stream. The following shows a case where the final move should push the `PlayerCursor` out of bounds *after* reaching a passing End state (3 moves but only 2 Tiles between current position and End goal position):
 
@@ -1033,6 +1154,8 @@ S P E
 Move (WASD):
 Level 7 solved!
 ```
+
+> Not game breaking, end condition has still technically been correctly reached; low priority fix.
 
 ## Project Evaluation
 

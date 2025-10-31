@@ -113,8 +113,14 @@ void Game::resetCurrentLevelState() {
 * Clears any existing level resources from the memory
 * @throws LevelLoadException if a level file fails to load. Attempts to skip and load the next level instead.
 */
-void Game::loadNextLevel() {
+void Game::loadNextLevel(unsigned int attempts) {
 	this->cleanupLevel();
+
+	if (attempts >= this->MAX_LOAD_ATTEMPTS) {
+		std::cerr << "\n\nFailed could load a valid level data file after " << attempts << " attempts." << std::endl;
+		this->gameOver = true;
+		return;
+	}
 
 	if (this->currentLevelIndex >= this->levelFiles.size()) {
 		std::cout << "\n\nAll levels have been completed! Thank you for playing!" << std::endl;
@@ -136,9 +142,10 @@ void Game::loadNextLevel() {
 	}
 	catch (const LevelLoadException& e) {
 		std::cerr << "Error Loading Level " << filename << ": " << e.what() << std::endl;
+		std::cerr << "Current attempt: " << attempts + 1 << std::endl;
 
 		currentLevelIndex++;
-		loadNextLevel(); // try to load the next level and hope it aint broke
+		loadNextLevel(attempts + 1); // try to load the next level and hope it aint broke
 	}
 }
 
