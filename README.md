@@ -24,8 +24,9 @@ Immersive Game Technologies
 6. [UML Design Diagrams](#uml-design-diagrams)  
 7. [Sample Screens](#sample-screens)  
 8. [Exception Handling and Test Cases](#exception-handling-and-test-cases)  
-9. [Further Details](#further-details)  
-10. [Project Evaluation](#project-evaluation)
+9. [Further Details](#further-details)
+10. [Known Bugs](#known-bugs)
+11. [Project Evaluation](#project-evaluation)
 
 ## Gameplay Description
 
