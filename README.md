@@ -67,6 +67,32 @@ xcopy "$(ProjectDir)levels" "$(TargetDir)levels\" /s /i /y
 
 ## Use of AI Description
 
+> In line with the indicated acceptable level of AI use above, the following uses are acceptable:
+> - Creating game assets (models, sprites, font and title, art, music and sound effects).
+> - Code assistant.
+> - Programming testing.
+> - Readme report crafting.
+
+### Code Assistant
+
+An AI model was used to assist with refactoring methods throughout the development process. This helped me ensure that my class designs were memory safe and adhered to Software Engineering principles (OOP/SOLID/DRY/RAII).
+
+The AI model provided me with guidance on how to use `std::unique_ptr`s to ensure memory safety through the Resource Acquisition Is Initialisation (RAII) design pattern; `Game` *owns* `Grid` and `PlayerCursor` objects, therefore handling memory cleanup when the object is destoryed.
+
+AI was also used to assist with code-documentation, assisting with generating accurate Doxygen comments (`@brief`, `@param`, `@return`, `@throws`). These comments help to ensure that the codebase is maintainable.
+
+*AI models were used only in an assistive role, and where used I ensured that I understood the changes it was suggesting and implemented them myself.*
+
+### Programming Testing
+
+AI was also used to find and debug issues within the code.
+
+This was especially the case when attempting to resolve [Known Bugs: \[1\]](#known-bugs), where the recursive `Game::loadNextLevel` method required a base case limiting the number of attempts in order to remove the risk of an infinitely recursing self-call.
+
+### README Report Crafting
+
+AI has been used to assist with technical documentation, helping me ensure that the reports details are correct! It helped me whilst writing about the implementation of Software Engineering principles used throughout the project, as well as helping me to describe why these design choices were made.
+
 ## Game Programming Patterns Used
 
 The system was developed using Object-Oriented Programming (OOP) principles, SOLID Software Engineering Design guidelines and Game Programming Patterns in mind, ensuring easy extensibility and maintainability for the project.
