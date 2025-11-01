@@ -406,6 +406,51 @@ void RandomGame::loadNextLevel(unsigned int attempts = 0) {
 
 ## UML Design Diagrams
 
+<details>
+<summary>Game and RandomGame Class Diagram</summary>
+
+![](/02-diagrams/Game-RandomGame.drawio.svg)
+
+</details>
+
+<details>
+<summary>Tile, StandardTile and MultiVisitTile Class Diagram</summary>
+
+![](/02-diagrams/Tile-polymorphism.drawio.svg)
+
+</details>
+
+<details>
+<summary>Grid Class Diagram</summary>
+
+![](/02-diagrams/Grid.drawio.svg)
+
+</details>
+
+<details>
+<summary>PlayerCursor Class Diagram</summary>
+
+![](/02-diagrams/PlayerCursor.drawio.svg)
+
+</details>
+
+<details>
+<summary>LevelLoader and LevelLoadExcpetion Class Diagram</summary>
+
+![](/02-diagrams/LevelLoader.drawio.svg)
+
+</details>
+
+<details>
+<summary>Full Class Architecture Diagram</summary>
+
+<br>This diagram shows a high level overview of the system and class architecture used, showing how the instances of the classes `Game`, `RandomGame`, `Grid`, `PlayerCursor`, `LevelLoader` and the polymorphic `Tile` hierarchy interact. It details the ownership (via `std::unique_ptr` smart pointers), composition and inheritance relationships between classes. It does now showcase implementation details, which is instead covered by the class-specific diagrams above.<br><br>
+
+
+![](/02-diagrams/Architecture.drawio.svg)
+
+</details>
+
 ## Sample Screens
 
 <details>
@@ -1185,4 +1230,3 @@ Level 7 solved!
 > Not game breaking, end condition has still technically been correctly reached; low priority fix.
 
 ## Project Evaluation
-

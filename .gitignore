@@ -468,3 +468,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Draw.io Temp Files
+*.drawio.bkp

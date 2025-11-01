@@ -1,0 +1,40 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.7 Chrome/138.0.7204.251 Electron/37.7.1 Safari/537.36" version="28.2.7">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="844" dy="822" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-0" value="Coords&lt;span style=&quot;font-weight: normal;&quot;&gt;&amp;nbsp;struct&lt;/span&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="320" y="60" width="200" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-1" value="+ int x&lt;div&gt;+ int y&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="-YkLOrmUJCvJwBPOB59M-0">
+          <mxGeometry y="26" width="200" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-2" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="-YkLOrmUJCvJwBPOB59M-0">
+          <mxGeometry y="70" width="200" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-3" value="+ operator==(target : Coords)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="-YkLOrmUJCvJwBPOB59M-0">
+          <mxGeometry y="78" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-9" value="Grid" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="240" y="240" width="360" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-10" value="- std::vector&amp;lt;std::vector&amp;lt;std::unique_ptr&amp;lt;Tile&amp;gt;&amp;gt;&amp;gt; tiles&lt;div&gt;-&amp;nbsp;std::vector&amp;lt;std::vector&amp;lt;TileType&amp;gt;&amp;gt; initialLevelState&lt;/div&gt;&lt;div&gt;- int width = -1&lt;/div&gt;&lt;div&gt;- int height = -1&lt;/div&gt;&lt;div&gt;- Coords startCoords&lt;/div&gt;&lt;div&gt;- Coords endCoords&lt;/div&gt;&lt;div&gt;- int remainingWalkableTiles = 0&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="-YkLOrmUJCvJwBPOB59M-9">
+          <mxGeometry y="26" width="360" height="124" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-11" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="-YkLOrmUJCvJwBPOB59M-9">
+          <mxGeometry y="150" width="360" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-12" value="- decrementWalkableTiles() void&lt;div&gt;- isInBounds(coords : Coords) bool&lt;/div&gt;&lt;div&gt;- createNewTile(type : TileType) std::unique_ptr&amp;lt;Tile&amp;gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ Grid(levelData : std::vector&amp;lt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;std::vector&amp;lt;TileType&amp;gt;&amp;gt;)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ ~Grid()&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;+ getWidth() int&lt;/div&gt;&lt;div&gt;+ getHeight() int&lt;/div&gt;&lt;div&gt;+ getStartCoords() Coords&lt;/div&gt;&lt;div&gt;+ getEndCoords() Coords&lt;/div&gt;&lt;div&gt;+ getRemainingWalkableTiles() int&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ isValidMove(target : Coords) bool&lt;/div&gt;&lt;div&gt;+ updateLevelState(previous : Coords) void&lt;/div&gt;&lt;div&gt;+ checkWinConditions(currentPos : Coords) bool&lt;/div&gt;&lt;div&gt;+ reset() void&lt;/div&gt;&lt;div&gt;+ display(playerPosition : Coords) void&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="-YkLOrmUJCvJwBPOB59M-9">
+          <mxGeometry y="158" width="360" height="282" as="geometry" />
+        </mxCell>
+        <mxCell id="-YkLOrmUJCvJwBPOB59M-13" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.496;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="-YkLOrmUJCvJwBPOB59M-9" target="-YkLOrmUJCvJwBPOB59M-3">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="254" y="184" as="sourcePoint" />
+            <mxPoint x="414" y="184" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
