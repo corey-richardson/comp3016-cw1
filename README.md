@@ -78,9 +78,11 @@ xcopy "$(ProjectDir)levels" "$(TargetDir)levels\" /s /i /y
 
 An AI model was used to assist with refactoring methods throughout the development process. This helped me ensure that my class designs were memory safe and adhered to Software Engineering principles (OOP/SOLID/DRY/RAII).
 
-The AI model provided me with guidance on how to use `std::unique_ptr`s to ensure memory safety through the Resource Acquisition Is Initialisation (RAII) design pattern; `Game` *owns* `Grid` and `PlayerCursor` objects, therefore handling memory cleanup when the object is destoryed.
+The AI model provided me with guidance on how to use `std::unique_ptr`s to ensure memory safety through the Resource Acquisition Is Initialisation (RAII) design pattern; `Game` *owns* `Grid` and `PlayerCursor` objects, therefore handling automatic memory cleanup when the object is destroyed.
 
 AI was also used to assist with code-documentation, assisting with generating accurate Doxygen comments (`@brief`, `@param`, `@return`, `@throws`). These comments help to ensure that the codebase is maintainable.
+
+GitHub Copilot has also been used to draft some of the commit messages for this project, ensuring commit messages were clearly and concisely describing the changes made using the correct technical termionology. Commit messages were reviewed by me and changed where needed to ensure they were accurate to the changes made and not off-topic. This ensures that the version-control history of the project remained accurate, provided a documentation of changes made as the project developed.
 
 *AI models were used only in an assistive role, and where used I ensured that I understood the changes it was suggesting and implemented them myself.*
 
