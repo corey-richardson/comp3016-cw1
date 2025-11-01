@@ -13,6 +13,7 @@
 class RandomGame : public Game {
 public:
 	RandomGame();
+protected:
 	void loadLevelManifest(const std::string& levelManifestFilename) override;
 	void loadNextLevel(unsigned int attempts = 0) override;
 	void onLevelSolved() override;
