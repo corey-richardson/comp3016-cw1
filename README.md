@@ -9,8 +9,9 @@ Immersive Game Technologies
 
 | YouTube Game Demonstration and Code Walkthrough Link |
 | :---: |
-|  |
-<!-- TODO -->
+| https://youtu.be/Izb39A_jcA0?si=dNG4okZAVmT7cioN |
+
+To run the `.exe`, first ensure that the `levels/` directory is present. If building from Visual Studio, this directory should be placed alongside the source code and is copied over by a Post-Build Event. If using a non-Windows machine, the CLI command used to do this may need to be altered for your platform.
 
 ---
 
