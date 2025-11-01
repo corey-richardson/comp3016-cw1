@@ -471,3 +471,9 @@ FodyWeavers.xsd
 
 # Draw.io Temp Files
 *.drawio.bkp
+
+# Declaration Of AI Use Document
+StudentDeclaration*.docx
+
+# Video Assets
+04-video/
