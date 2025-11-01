@@ -190,7 +190,7 @@ Game::~Game() {
 */
 bool Game::handleInput() {
 	char input;
-	std::cout << "\nMove (WASD): ";
+	std::cout << "\nMove (W/A/S/D / R / Q): ";
 
 	if (!(std::cin >> input)) {
 		gameOver = true;
