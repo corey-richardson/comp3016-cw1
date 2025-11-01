@@ -455,6 +455,7 @@ void RandomGame::loadNextLevel(unsigned int attempts = 0) {
 
 <details>
 <summary>Main Menu</summary>
+
 ```
 ===================================
           PUZZLE PATH GAME
@@ -916,6 +917,8 @@ GAME MODES:
 -----------------------------------
 Enter your choice (1-4):
 ```
+
+![](/02-diagrams/MainMenuAndRulesScreen.png)
 
 </details>
 
