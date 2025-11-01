@@ -1235,3 +1235,19 @@ Level 7 solved!
 > Not game breaking, end condition has still technically been correctly reached; low priority fix.
 
 ## Project Evaluation
+
+In my initial [Idea Proposal Document](/01-proposal/CW1-Idea-Proposal.pdf) I declared that my focus as a Software Engineering path student would focus on a strong technical implementation rather than a focus on creative design choices such as narrative and storytelling, as this would be the aspect of the project most relevant to my learning benefit and degree. I believe the project succeeded with this as it has a strong adherance to the software engineering design principles I aimed to follow.
+
+The project utilises Object-Oriented Programming principles through inheritance, encapsulation and polymorphism (LSP) for the `Tile` and `Game` classes, and strongly adheres to the Single Responsibility Principle (SRP), namely in the `LevelLoader` class having a sole-concern of level parsing, and the `Game` object having a sole-concern of managing the game flow.
+
+As well as standard software engineering principles, the project also uses multiple advanced game programming patterns. The use of a [Template Method Pattern](https://en.wikipedia.org/wiki/Template_method_pattern) when implementing the `Game::onLevelSolved`/`RandomGame::onLevelSolved` methods demonstrates this as it injects specialised logic into a derived method without requiring a modification to the base class; Open-Closed Principle (OCP).
+
+This project allowed me to learn a C++ memory management technique through the use of `std::unique_ptr` smart pointers, which were used to enforce adherance to the Resource Acquistion Is Initialisation (RAII) pattern. Smart pointers ensure memory safety by guarenteeing resource cleanup for dynamically allocated objects, by assigning "ownership" of the objects to the class they are being used by.
+
+Whilst I believe that my use of a command-line argument `./app --test` to run a seperate test level manifest file is sufficient to validate the functionality of a project of this scale, as a learning oppurtunity I would've liked to have been able to implement unit testing through the use of a testing framework such as Google Test. This project would be a strong contender for this to be added as the adhereance to the SRP means that code blocks are already largely partitioned as small testable "units". Test cases would be especially useful in the `LevelLoader` static class, whose methods are deterministic. Unit testing would assist in improving quality of the code. A test framework could've also been used to utilise a Test Driven Development (TDD) style of development, to ensure a high code quality. 
+
+As a console-based game, the aesthetics of the application will be... limited. SDL2 could've been used to improve this, however I believe that the tradeoff of research and learning time required for this would've caused compromises in other aspects of the games implementation, likely decreasing the quality of use of the software engineering principles.
+
+---
+
+[![LGTM](https://lgtm.lol/p/1064)](https://lgtm.lol/i/1064)
